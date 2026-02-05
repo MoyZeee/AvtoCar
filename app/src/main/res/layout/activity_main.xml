@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:baselineAligned="true">
+
+        <!-- Верхний бар с профилем -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/topBarCard"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="@color/surface"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="16dp">
+
+                <!-- Иконка профиля -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/profileCard"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="@string/profile_button_desc"
+                    app:cardBackgroundColor="@color/primary_light"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="2dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/profileButton"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/profile_icon"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/chelovek"
+                        android:importantForAccessibility="yes" />
+                </androidx.cardview.widget.CardView>
+
+                <!-- Заголовок приложения -->
+                <TextView
+                    android:id="@+id/appTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:importantForAccessibility="yes"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/notificationsCard"
+                    app:layout_constraintStart_toEndOf="@+id/profileCard"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- Кнопка уведомлений -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/notificationsCard"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="@string/notifications_button_desc"
+                    app:cardBackgroundColor="@color/primary_light"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="2dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/notificationsButton"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/notifications_icon"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_notifications_black_24dp"
+                        android:importantForAccessibility="yes" />
+
+                    <!-- Бейдж для непрочитанных -->
+                    <TextView
+                        android:id="@+id/notificationBadge"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_gravity="top|end"
+                        android:background="@drawable/badge_background"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        android:visibility="gone" />
+                </androidx.cardview.widget.CardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Заголовок раздела -->
+        <TextView
+            android:id="@+id/sectionTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:background="@drawable/rounded_accent_background"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="14dp"
+            android:text="@string/available_cars"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:importantForAccessibility="yes"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/topBarCard" />
+
+        <!-- Фильтры и сортировка -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/filtersCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="@color/surface"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sectionTitle">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <!-- Существующие фильтры -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:baselineAligned="true">
+
+                    <!-- Фильтр по типу -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:minWidth="120dp"
+                        app:boxBackgroundColor="@color/input_background"
+                        app:endIconMode="dropdown_menu"
+                        app:endIconTint="@color/primary"
+                        app:startIconDrawable="@drawable/ic_car_type"
+                        app:startIconTint="@color/primary"
+                        android:importantForAccessibility="yes"
+                        android:hint="@string/car_type_hint">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/typeFilter"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none"
+                            android:labelFor="@+id/typeFilter"
+                            android:textSize="14sp"
+                            android:textColor="@color/black"
+                            android:minWidth="100dp"
+                            android:maxWidth="150dp"
+                            android:hint="@string/car_type_hint"
+                            android:importantForAccessibility="no" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Фильтр по цене -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:minWidth="120dp"
+                        android:hint="@string/price_hint"
+                        app:boxBackgroundColor="@color/input_background"
+                        app:endIconMode="dropdown_menu"
+                        app:endIconTint="@color/primary"
+                        app:startIconDrawable="@drawable/ic_price"
+                        app:startIconTint="@color/primary"
+                        android:importantForAccessibility="yes"
+                        android:contentDescription="@string/price_filter_desc">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/priceFilter"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none"
+                            android:labelFor="@+id/priceFilter"
+                            android:textSize="14sp"
+                            android:textColor="@color/black"
+                            android:minWidth="100dp"
+                            android:maxWidth="150dp"
+                            android:hint="@string/price_hint"
+                            android:importantForAccessibility="no" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <!-- СПИННЕР УДАЛЁН -->
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Статистика и информация -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/statsCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="@color/surface"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/filtersCard">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:baselineAligned="true"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/totalCarsText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/total_cars_default"
+                        android:textColor="@color/dark_blue"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:importantForAccessibility="yes" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/total_cars_label"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:importantForAccessibility="yes" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="30dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:background="@color/outline"
+                    android:importantForAccessibility="no" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/availableCarsText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/available_cars_default"
+                        android:textColor="@color/primary_dark"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:importantForAccessibility="yes" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/available_cars_label"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:importantForAccessibility="yes" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="30dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:background="@color/outline"
+                    android:importantForAccessibility="no" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/avgPriceText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/avg_price_default"
+                        android:textColor="@color/accent_blue"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:importantForAccessibility="yes" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/avg_price_label"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:importantForAccessibility="yes" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Список автомобилей -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/carsRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:clipToPadding="false"
+            android:paddingBottom="80dp"
+            android:contentDescription="@string/cars_list_desc"
+            android:importantForAccessibility="yes"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="1"
+            app:layout_constraintBottom_toTopOf="@+id/bottomNavigation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/statsCard" />
+
+        <!-- Кнопка добавления нового автомобиля -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAddCar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:contentDescription="@string/add_car"
+            android:src="@drawable/ic_add"
+            android:visibility="gone"
+            android:importantForAccessibility="yes"
+            app:backgroundTint="@color/primary"
+            app:layout_constraintBottom_toTopOf="@+id/bottomNavigation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:tint="@color/white" />
+
+        <!-- Нижняя навигационная панель -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="56dp"
+            android:background="@color/surface"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:importantForAccessibility="yes"
+            app:elevation="8dp"
+            app:itemIconTint="@drawable/bottom_nav_colors"
+            app:itemTextColor="@drawable/bottom_nav_colors"
+            app:labelVisibilityMode="labeled"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:menu="@menu/bottom_nav_menu" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

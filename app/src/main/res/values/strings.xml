@@ -1,0 +1,345 @@
+<resources>
+
+
+    <!-- Существующие строки -->
+    <string name="app_name">АВТО.СКР</string>
+    <string name="available_cars">ДОСТУПНЫЕ АВТОМОБИЛИ</string>
+    <string name="profile_button_desc">Кнопка профиля пользователя</string>
+    <string name="profile_icon">Иконка профиля</string>
+    <string name="search_button_desc">Кнопка поиска</string>
+    <string name="search_icon">Иконка поиска</string>
+    <string name="cars_list_desc">Список доступных автомобилей</string>
+    <string name="add_car">Добавить новый автомобиль</string>
+
+    <!-- Для фильтров (добавьте эти строки) -->
+    <string name="car_type_hint">Тип авто</string>
+    <string name="price_hint">Цена</string>
+    <string name="type_filter_desc">Фильтр по типу автомобиля. Выберите тип из выпадающего списка</string>
+    <string name="price_filter_desc">Фильтр по цене. Выберите диапазон цен из выпадающего списка</string>
+    <string name="general_filter_desc">Общий фильтр автомобилей</string>
+
+    <!-- Для статистики -->
+    <string name="total_cars_default">8</string>
+    <string name="total_cars_label">Всего авто</string>
+    <string name="available_cars_default">5</string>
+    <string name="available_cars_label">Доступно</string>
+    <string name="avg_price_default">1500</string>
+    <string name="avg_price_label">Средняя цена</string>
+
+
+    <string-array name="car_types_array">
+        <item>Все типы</item>
+        <item>Седан</item>
+        <item>Внедорожник</item>
+        <item>Хэтчбек</item>
+        <item>Купе</item>
+    </string-array>
+
+    <string-array name="price_ranges_array">
+        <item>Любая цена</item>
+        <item>До 3000₽</item>
+        <item>3000-5000₽</item>
+        <item>5000-7000₽</item>
+        <item>7000-10000₽</item>
+        <item>Самый дешёвый</item>
+        <item>Самый дорогой</item>
+    </string-array>
+
+    <!-- Search Activity Strings -->
+    <string name="toolbar_search">Панель инструментов поиска</string>
+    <string name="search_title">Расширенный поиск</string>
+    <string name="filters_section_desc">Секция фильтров поиска</string>
+    <string name="search_params">Параметры поиска</string>
+
+    <!-- Labels -->
+    <string name="brand_label">Марка автомобиля</string>
+    <string name="model_label">Модель</string>
+    <string name="year_label">Год выпуска</string>
+    <string name="price_range_label">Диапазон цен (₽/сутки)</string>
+    <string name="body_type_label">Тип кузова</string>
+    <string name="additional_options">Дополнительно</string>
+
+    <!-- Hints -->
+    <string name="brand_hint">Выберите марку</string>
+    <string name="model_hint">Введите модель</string>
+    <string name="year_hint">Выберите год</string>
+    <string name="price_from_hint">От</string>
+    <string name="price_to_hint">До</string>
+
+    <!-- Accessibility Descriptions -->
+    <string name="brand_filter_desc">Поле для выбора марки автомобиля</string>
+    <string name="model_filter_desc">Поле для ввода модели автомобиля</string>
+    <string name="year_filter_desc">Поле для выбора года выпуска автомобиля</string>
+    <string name="price_from_desc">Минимальная цена аренды в рублях</string>
+    <string name="price_to_desc">Максимальная цена аренды в рублях</string>
+    <string name="price_separator">–</string>
+    <string name="body_type_group_desc">Выбор типа кузова автомобиля</string>
+
+    <!-- Chip Texts and Descriptions -->
+    <string name="chip_sedan">Седан</string>
+    <string name="chip_sedan_desc">Кнопка выбора типа кузова седан. Нажмите для выбора</string>
+    <string name="chip_suv">Внедорожник</string>
+    <string name="chip_suv_desc">Кнопка выбора типа кузова внедорожник. Нажмите для выбора</string>
+    <string name="chip_hatchback">Хэтчбек</string>
+    <string name="chip_hatchback_desc">Кнопка выбора типа кузова хэтчбек. Нажмите для выбора</string>
+    <string name="chip_coupe">Купе</string>
+    <string name="chip_coupe_desc">Кнопка выбора типа кузова купе. Нажмите для выбора</string>
+    <string name="chip_universal">Универсал</string>
+    <string name="chip_universal_desc">Кнопка выбора типа кузова универсал. Нажмите для выбора</string>
+
+    <!-- Checkbox -->
+    <string name="cb_available_text">Только доступные автомобили</string>
+    <string name="cb_available_desc">Показывать только доступные для аренды автомобили. Нажмите для выбора</string>
+
+
+    <!-- Новые строки для уведомлений -->
+    <string name="back_button">Назад</string>
+    <string name="clear_all_notifications">Очистить все уведомления</string>
+
+
+    <!-- Для BookingsActivity -->
+
+    <string name="back">Назад</string>
+    <string name="bookings_count_default">Бронирования: 0</string>
+
+    <string name="no_bookings_desc">Список бронирований пуст</string>
+    <string name="bookings_list_desc">Список ваших бронирований</string>
+
+    <!-- В файле res/values/strings.xml добавьте: -->
+    <string name="days_count">%d дней</string>
+
+
+    <string name="date_cannot_be_earlier">Дата окончания не может быть раньше даты начала</string>
+    <string name="please_fill_profile">Пожалуйста, заполните паспортные данные и водительское удостоверение в профиле</string>
+    <string name="car_data_error">Ошибка: данные автомобиля не получены</string>
+
+
+    <string name="notifications_button_desc">Открыть уведомления</string>
+    <string name="notifications_icon">Иконка уведомлений</string>
+    <string name="clear_all">Очистить все</string>
+    <string name="no_notifications">Нет уведомлений</string>
+
+    <string name="booking">Бронирование</string>
+    <string name="my_bookings">Мои бронирования</string>
+    <string name="book_now">Забронировать</string>
+    <string name="select_dates">Выберите даты</string>
+    <string name="start_date">Начало</string>
+    <string name="end_date">Окончание</string>
+    <string name="rental_period">Период аренды</string>
+    <string name="total_price">Итого к оплате</string>
+    <string name="booking_success">Бронирование успешно создано!</string>
+    <string name="booking_error">Ошибка при создании бронирования</string>
+    <string name="car_booked">Автомобиль уже забронирован на выбранные даты</string>
+    <string name="cancel_booking">Отменить бронирование</string>
+    <string name="complete_booking">Завершить бронирование</string>
+    <string name="no_bookings">У вас пока нет бронирований</string>
+    <string name="booking_cancelled">Бронирование отменено</string>
+    <string name="booking_completed">Бронирование завершено</string>
+    <!-- Buttons -->
+    <string name="btn_reset_text">Сбросить</string>
+    <string name="btn_reset_desc">Кнопка сброса всех фильтров</string>
+    <string name="btn_apply_text">Применить фильтры</string>
+    <string name="btn_apply_desc">Кнопка применения выбранных фильтров</string>
+    <string name="action_buttons_desc">Кнопки действий для фильтров</string>
+
+    <!-- Results Section -->
+    <string name="results_section_desc">Секция с результатами поиска</string>
+    <string name="results_title">Результаты поиска</string>
+    <string name="results_title_desc">Заголовок раздела с результатами поиска</string>
+    <string name="results_count_desc">Количество найденных автомобилей</string>
+    <string name="search_results_desc">Список найденных автомобилей</string>
+
+    <!-- Empty State -->
+    <string name="empty_state_desc">Состояние при отсутствии результатов поиска</string>
+    <string name="empty_state_icon_desc">Иконка поиска</string>
+    <string name="empty_state_title">Начните поиск</string>
+    <string name="empty_state_message">Используйте фильтры выше, чтобы найти подходящий автомобиль</string>
+
+    <!-- FAB -->
+    <string name="fab_scroll_desc">Прокрутить к началу страницы</string>
+    <string name="payment_successful" translatable="false">Оплата успешно произведена</string>
+    <string name="payment_successful_title" translatable="false">Спасибо за оплату!</string>
+    <string name="payment_successful_message" translatable="false">Ваш платеж успешно обработан.</string>
+    <string name="continue_button_text" translatable="false">Продолжить</string>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
+
+
+    <string name="nav_home">Главная</string>
+    <string name="nav_search">Поиск</string>
+    <string name="nav_bookings">Брони</string>
+    <string name="nav_profile">Профиль</string>
+    <string name="nav_notifications">Уведомления</string>
+
+
+    <!-- Существующие строки -->
+
+    <!-- Новые строки для доступности -->
+    <string name="status_available">ДОСТУПНО</string>
+    <string name="car_title_bmw">BMW X7</string>
+    <string name="favorite_button_desc">Добавить в избранное</string>
+    <string name="car_details_default">Автоматическая коробка передач, бензин, 5 мест</string>
+    <string name="car_price_default">7 800 ₽</string>
+    <string name="per_day">в сутки</string>
+    <string name="book_button">Забронировать</string>
+    <string name="status_unavailable">ЗАНЯТО</string>
+
+    <!-- Для других автомобилей -->
+    <string name="car_title_porsche">Porsche 911 Turbo S</string>
+    <string name="car_title_toyota">Toyota Land Cruiser</string>
+    <string name="car_title_audi">Audi A6</string>
+    <string name="car_title_mercedes">Mercedes-Benz C-Class</string>
+    <string name="car_title_hyundai">Hyundai Solaris</string>
+    <string name="car_title_kia">Kia Rio</string>
+    <string name="car_title_skoda">Skoda Octavia</string>
+
+
+    <string name="terms_and_conditions_text" translatable="false">
+        Регистрируясь в нашем приложении и используя наши услуги, вы даете свое добровольное, информированное и однозначное согласие на сбор, обработку, хранение и использование ваших персональных данных в соответствии с настоящим Пользовательским соглашением и нашей Политикой конфиденциальности
+    </string>
+
+
+    <!-- Тексты для регистрации -->
+    <string name="register_welcome">Добро пожаловать!</string>
+    <string name="register_subtitle">Создайте новый аккаунт</string>
+    <string name="username_hint">Имя пользователя</string>
+    <string name="username_helper">Введите ваше имя</string>
+    <string name="confirm_password_hint">Подтвердите пароль</string>
+    <string name="register_button">Зарегистрироваться</string>
+    <string name="or_register_with">Или зарегистрируйтесь через</string>
+    <string name="have_account_login">Уже есть аккаунт? Войти</string>
+
+    <string name="login_with_biometric" translatable="false">Войти по лицу/отпечатку</string>
+
+    <string name="terms_text">Я соглашаюсь с</string>
+    <string name="terms_link">правилами</string>
+    <!-- Текст для диалога/активности с правилами -->
+    <string name="terms_dialog_title">Пользовательское соглашение</string>
+    <string name="terms_content">Здесь разместите текст вашего пользовательского соглашения...</string>
+    <string name="terms_accept">Принять</string>
+    <string name="terms_decline">Отклонить</string>
+
+
+    <string name="logo_description">Логотип АВТО.СКР</string>
+    <string name="welcome_message">Добро пожаловать</string>
+    <string name="login_subtitle">Войдите в свой аккаунт</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Пароль</string>
+    <string name="login_button">ВОЙТИ</string>
+    <string name="forgot_password">Забыли пароль?</string>
+    <string name="remember_me">Запомнить меня</string>
+    <string name="or_login_with">Или войдите через</string>
+    <string name="no_account_text">Еще нет аккаунта?</string>
+    <string name="register_link">Зарегистрироваться</string>
+    <string name="login_tab">Вход</string>
+    <string name="register_tab">Регистрация</string>
+    <string name="email_helper">Введите ваш email</string>
+    <string name="password_helper">Минимум 8 символов</string>
+    <string name="google_auth">Войти через Google</string>
+    <string name="vk_auth">Войти через VK</string>
+    <string name="yandex_auth">Войти через Яндекс</string>
+
+    <!-- Сообщения ошибок валидации -->
+    <string name="error_invalid_email" translatable="false">Введите корректный email</string>
+    <string name="error_short_password" translatable="false">Минимум 8 символов</string>
+    <string name="error_password_complexity" translatable="false">Должен содержать буквы и цифры</string>
+    <string name="error_empty_field" translatable="false">Поле не может быть пустым</string>
+    <string name="error_terms_not_accepted" translatable="false">Примите пользовательское соглашение</string>
+
+    <!-- Сообщения для доступности (Accessibility) -->
+    <string name="login_button_description" translatable="false">Кнопка входа в приложение</string>
+    <string name="forgot_password_description" translatable="false">Восстановить пароль</string>
+    <string name="register_description" translatable="false">Перейти к регистрации</string>
+    <string name="biometric_login_description" translatable="false">Войти с помощью биометрии</string>
+    <string name="google_login_description" translatable="false">Вход через Google</string>
+    <string name="vk_login_description" translatable="false">Вход через ВКонтакте</string>
+
+
+    <!-- Сообщения для биометрической аутентификации -->
+    <string name="biometric_auth_title" translatable="false">Биометрическая аутентификация</string>
+    <string name="biometric_auth_subtitle" translatable="false">Используйте отпечаток пальца или лицо</string>
+    <string name="biometric_auth_cancel" translatable="false">Отмена</string>
+    <string name="biometric_auth_error" translatable="false">Ошибка аутентификации</string>
+    <string name="biometric_auth_failed">Аутентификация не удалась</string>
+    <string name="biometric_auth_success">Аутентификация успешна</string>
+
+    <!-- Сообщения для восстановления пароля -->
+    <string name="forgot_password_title">Восстановление пароля</string>
+    <string name="forgot_password_message">Введите email для восстановления</string>
+    <string name="forgot_password_send">Отправить</string>
+    <string name="forgot_password_cancel">Отмена</string>
+    <string name="forgot_password_success">Инструкция отправлена на email</string>
+    <string name="forgot_password_hint">Email для восстановления</string>
+
+    <!-- Уведомления и сообщения -->
+    <string name="login_success">Вход выполнен успешно!</string>
+    <string name="login_failed">Неверный email или пароль</string>
+    <string name="loading">Загрузка...</string>
+    <string name="coming_soon">Скоро будет доступно</string>
+
+    <!-- Сообщения для социальных сетей -->
+    <string name="google_login_soon">Вход через Google скоро будет доступен</string>
+    <string name="vk_login_soon">Вход через VK скоро будет доступен</string>
+
+    <!-- Сообщения для проверки профиля -->
+    <string name="profile_incomplete_title">Профиль не заполнен</string>
+    <string name="profile_incomplete_message">Заполните информацию в профиле</string>
+
+    <!-- Общие сообщения -->
+    <string name="ok">OK</string>
+    <string name="cancel">Отмена</string>
+    <string name="accept">Принимаю</string>
+    <string name="decline">Отклонить</string>
+
+    <!-- Валидационные сообщения -->
+    <string name="validation_ok">✓ Корректно</string>
+    <string name="validation_strong_password">✓ Надежный пароль</string>
+    <string name="auto_skr" translatable="false">АВТО.СКР</string>
+
+    <string name="google_button" translatable="false">G</string>
+    <string name="vk_button" translatable="false">VK</string>
+
+
+    <string name="car_type_filter_desc">Фильтр по типу автомобиля</string>
+    <string name="car_type_icon_desc">Иконка типа автомобиля</string>
+    <string name="car_type_all">Все</string>
+
+
+    <string name="price_icon_desc">Иконка цены</string>
+    <string name="price_any">Любая цена</string>
+
+    <string name="general_filter_hint">Общий фильтр</string>
+
+
+    <string name="recent_cars">Недавние автомобили</string>
+    <string name="view_all">Смотреть все</string>
+    <string name="filters">Фильтры</string>
+    <string name="suv">Внедорожник</string>
+
+    <string name="premium">Премиум</string>
+    <string name="search_cars">Поиск автомобилей...</string>
+
+
+    <string name="terms_and_conditions">Соглашаюсь с условиями</string>
+    <string name="register_prompt">Еще нет аккаунта? Зарегистрироваться</string>
+
+    <string name="terms_checkbox_description">Согласие с условиями</string>
+
+
+    <!-- Названия социальных сетей -->
+    <string name="google">Google</string>
+    <string name="vk">VK</string>
+
+    <string-array name="filter_options">
+        <item>Все</item>
+        <item>Самый дешёвый</item>
+        <item>Самый дорогой</item>
+        <item>Седан</item>
+        <item>Внедорожник</item>
+        <item>Хэтчбек</item>
+    </string-array>
+    <string name="title_activity_bookings">BookingsActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+</resources>

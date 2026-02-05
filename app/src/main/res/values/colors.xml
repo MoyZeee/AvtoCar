@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Основные цвета приложения -->
+    <color name="ochre">#CC7722</color>
+    <color name="dark_brown">#654321</color>
+    <color name="black">#FF000000</color>
+
+    <!-- Оранжевые цвета (основная тема) -->
+    <color name="Orange">#FFA500</color>
+    <color name="Orange_Yellow">#ED760E</color>
+    <color name="light_orange">#FFD54F</color>
+    <color name="orange_primary">#FF9800</color>
+    <color name="orange_700">#F57C00</color>
+    <color name="orange_500">#FF9800</color>
+    <color name="light_orange1">#FFDAB9</color>
+    <color name="dark_orange">#FF8F00</color>
+    <color name="orange_yellow">#FFC107</color>
+
+    <color name="google_red">#DB4437</color>
+
+    <!-- Серые цвета -->
+    <color name="Ser">#808080</color>
+    <color name="bechevi">#333333</color>
+    <color name="dark_gray">#666666</color>
+    <color name="gray">#A9A9A9</color>
+    <color name="medium_gray">#9E9E9E</color>
+    <color name="secondary_text_color">#757575</color>
+    <color name="secondary_text">#757575</color>
+
+    <!-- Синие цвета -->
+    <color name="primary_color">#2196F3</color>
+    <color name="accent_blue">#2196F3</color>
+    <color name="dark_blue">#1976D2</color>
+    <color name="light_blue">#E3F2FD</color>
+
+    <!-- Другие цвета -->
+    <color name="wi">#FAFAFA</color>
+    <color name="red">#00BFA5</color>
+    <color name="success_color">#4CAF50</color>
+    <color name="green_tick">#4CAF50</color>
+    <color name="background_color">#F5F5F5</color>
+    <color name="medium_brown">#A0522D</color>
+    <color name="light_sand">#F5F5DC</color>
+
+    <!-- Material Design цвета -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+
+    <!-- Новые цвета для улучшенного экрана входа -->
+    <!-- Цвета для состояний -->
+    <color name="error_red">#FF5252</color>
+    <color name="success_green">#4CAF50</color>
+    <color name="warning_orange">#FF9800</color>
+    <color name="info_blue">#2196F3</color>
+
+
+    <!-- Цвета для социальных кнопок -->
+    <color name="facebook_blue">#4267B2</color>
+
+    <!-- Цвета текста -->
+    <color name="text_disabled">#9E9E9E</color> <!-- Используем medium_gray -->
+    <color name="error_background">#FFEBEE</color>
+    <color name="success_background">#E8F5E8</color>
+
+    <!-- Цвета для состояний кнопок -->
+    <color name="button_enabled">#ED760E</color> <!-- Используем Orange_Yellow -->
+    <color name="button_disabled">#FFDAB9</color> <!-- Используем light_orange1 -->
+    <color name="button_pressed">#FF8F00</color> <!-- Используем dark_orange -->
+    <color name="button_text_enabled">#FFFFFF</color>
+    <color name="button_text_disabled">#A9A9A9</color> <!-- Используем gray -->
+
+    <!-- Цвета для прогресс-индикатора -->
+    <color name="progress_indicator">#ED760E</color> <!-- Используем Orange_Yellow -->
+    <color name="progress_track">#E0E0E0</color> <!-- Используем light_gray -->
+
+    <!-- Цвета для биометрической аутентификации -->
+    <color name="biometric_icon">#ED760E</color>
+    <color name="biometric_text">#666666</color>
+    <color name="validation_success">#4CAF50</color>
+    <color name="validation_error">#FF5252</color>
+    <color name="validation_warning">#FF9800</color>
+    <color name="link_color">#1976D2</color>
+    <color name="link_color_pressed">#0D47A1</color>
+    <color name="checkbox_checked">#ED760E</color>
+    <color name="checkbox_unchecked">#A9A9A9</color>
+    <color name="checkbox_disabled">#E0E0E0</color>
+    <color name="common_google_signin_btn_text_dark_disabled">#9E9E9E</color>
+    <color name="common_google_signin_btn_text_dark_default">#FFFFFF</color>
+    <color name="common_google_signin_btn_text_dark_pressed">#CCCCCC</color>
+    <color name="common_google_signin_btn_text_dark_focused">#FFFFFF</color>
+    <color name="common_google_signin_btn_text_light_disabled">#9E9E9E</color>
+    <color name="common_google_signin_btn_text_light_default">#757575</color>
+    <color name="common_google_signin_btn_text_light_pressed">#424242</color>
+    <color name="common_google_signin_btn_text_light_focused">#757575</color>
+    <color name="common_google_signin_btn_background_dark_disabled">#F2F2F2</color>
+    <color name="common_google_signin_btn_background_dark_default">#DB4437</color>
+    <color name="common_google_signin_btn_background_dark_pressed">#C53929</color>
+    <color name="common_google_signin_btn_background_light_disabled">#F2F2F2</color>
+    <color name="common_google_signin_btn_background_light_default">#FFFFFF</color>
+    <color name="common_google_signin_btn_background_light_pressed">#F2F2F2</color>
+    <color name="common_google_signin_btn_border_dark">#DB4437</color>
+    <color name="common_google_signin_btn_border_light">#DADCE0</color>
+    <color name="common_google_blue">#4285F4</color>
+    <color name="common_google_green">#34A853</color>
+    <color name="common_google_red">#DB4437</color>
+    <color name="common_google_yellow">#F4B400</color>
+    <color name="background">#F8F9FA</color>
+    <color name="primary">#FF6B35</color>
+    <color name="primary_dark">#E55A2B</color>
+    <color name="success_dark">#388E3C</color>
+    <color name="accent_dark">#1976D2</color>
+    <color name="text_secondary_dark">#616161</color>
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="text_hint">#BDBDBD</color>
+    <color name="outline">#E0E0E0</color>
+    <color name="vk_blue">#4C75A3</color>
+    <color name="yandex_red">#FF0000</color>
+    <color name="error">#F44336</color>
+    <color name="light_gray">#EEEEEE</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="primary_light">#FFD580</color>
+    <color name="success">#4CAF50</color>
+    <color name="accent">#2196F3</color>
+    <color name="input_background">#F5F5F5</color>
+    <color name="white">#FFFFFF</color>
+    <color name="secondary">#2D3047</color>
+    <color name="background_start">#0F2027</color>
+    <color name="background_end">#2C5364</color>
+    <color name="card_background">#1E2A32</color>
+    <color name="text_secondary_light">#90A4AE</color>
+    <color name="telegram_blue">#2AABEE</color>
+    <color name="warning">#FF9800</color>
+    <color name="divider">#37474F</color>
+    <color name="online">#00E676</color>
+    <color name="chip_background">#F5F5F5</color>
+
+
+    <color name="green">#4CAF50</color>
+
+    <color name="blue">#2196F3</color>
+
+    <color name="gray_light">#E0E0E0</color>
+
+    <color name="gray_dark">#616161</color>
+
+
+
+    <color name="text_tertiary">#61000000</color>
+
+
+    <!-- Системные цвета для кнопок -->
+        <color name="holo_red_dark">#FFD32F2F</color>
+        <color name="holo_green_dark">#FF388E3C</color>
+
+
+
+    <color name="surface_light">#F5F5F5</color>
+
+        <!-- Оранжевая палитра как в каршеринге -->
+    <color name="bottom_sheet_background">#FFFFFF</color>
+        <color name="orange_dark">#E55A2B</color>
+        <color name="orange_light">#FF8E53</color>
+        <color name="orange_light_bg">#FFF3E0</color>
+
+        <!-- Оттенки серого -->
+        <color name="light_gray_background">#F8F9FA</color>
+
+
+
+
+    <color name="chip_background_unchecked">#F5F5F5</color>
+    <color name="chip_background_checked">#E8EAF6</color>
+    <color name="chip_stroke_unchecked">#E0E0E0</color>
+    <color name="chip_stroke_checked">#3F51B5</color>
+    <color name="chip_text_unchecked">#757575</color>
+    <color name="chip_text_checked">#3F51B5</color>
+
+
+
+</resources>

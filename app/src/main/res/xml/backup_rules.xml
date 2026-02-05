@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+
+    <!-- Включаем корневую папку -->
+    <include domain="file" path="." />
+
+    <!-- Теперь можем исключить подпапки -->
+    <exclude domain="file" path="cache" />
+    <exclude domain="file" path="no_backup" />
+
+</full-backup-content>

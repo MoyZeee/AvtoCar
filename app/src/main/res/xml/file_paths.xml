@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Внешнее хранилище -->
+    <external-path
+        name="external_files"
+        path="." />
+
+    <!-- Внутреннее хранилище приложения -->
+    <files-path
+        name="files"
+        path="." />
+
+    <!-- Кэш приложения -->
+    <cache-path
+        name="cache"
+        path="." />
+
+    <!-- Внешние файлы приложения -->
+    <external-files-path
+        name="external_app_files"
+        path="." />
+
+    <!-- Внешний кэш приложения -->
+    <external-cache-path
+        name="external_app_cache"
+        path="." />
+
+    <!-- Для фотографий из камеры -->
+    <external-files-path
+        name="camera_images"
+        path="Pictures/" />
+</paths>

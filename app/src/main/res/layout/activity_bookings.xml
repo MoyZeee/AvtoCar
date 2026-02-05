@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:importantForAccessibility="yes">
+
+    <!-- Заголовок -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:background="@color/surface"
+        android:importantForAccessibility="yes">
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentStart="true"
+            android:src="@drawable/ic_back"
+            app:tint="@color/black"
+            android:contentDescription="@string/back"
+            android:scaleType="center"
+            android:importantForAccessibility="yes"
+            android:focusable="true"
+            android:clickable="true"
+            android:background="?selectableItemBackgroundBorderless"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/my_bookings"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:importantForAccessibility="yes"/>
+
+    </RelativeLayout>
+
+    <!-- Статистика -->
+    <TextView
+        android:id="@+id/bookingsCountTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="@string/bookings_count_default"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:background="@color/surface_light"
+        android:importantForAccessibility="yes"/>
+
+    <!-- Состояние пустого списка -->
+    <TextView
+        android:id="@+id/noBookingsText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        android:text="@string/no_bookings"
+        android:textColor="@color/text_secondary"
+        android:textSize="16sp"
+        android:visibility="gone"
+        android:importantForAccessibility="yes"
+        android:contentDescription="@string/no_bookings_desc"/>
+
+    <!-- Список бронирований -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewBookings"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp"
+        android:contentDescription="@string/bookings_list_desc"
+        android:importantForAccessibility="yes"/>
+
+</LinearLayout>
