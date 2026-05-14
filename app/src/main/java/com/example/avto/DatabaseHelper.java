@@ -7,14 +7,17 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "users.db";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 11; // Обновлено с 10 на 11
     private static DatabaseHelper instance;
 
     // Константы для таблицы пользователей
@@ -42,6 +45,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_BOOKING_STATUS = "status";
     private static final String COLUMN_BOOKING_DATE = "booking_date";
 
+    // Новые колонки для таблицы бронирований
+    private static final String COLUMN_BOOKING_PICKUP_LOCATION = "pickup_location";
+    private static final String COLUMN_BOOKING_LOCATION_DETAILS = "location_details";
+    private static final String COLUMN_BOOKING_PAYMENT_METHOD = "payment_method";
+    private static final String COLUMN_BOOKING_DELIVERY_TYPE = "delivery_type";
+    private static final String COLUMN_BOOKING_DELIVERY_ADDRESS = "delivery_address";
+    private static final String COLUMN_BOOKING_DELIVERY_FEE = "delivery_fee";
+
     // Константы для таблицы уведомлений
     private static final String TABLE_NOTIFICATIONS = "notifications";
     private static final String COLUMN_NOTIFICATION_ID = "id";
@@ -56,6 +67,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_CARS_AVAILABILITY = "cars_availability";
     private static final String COLUMN_CAR_ID = "car_id";
     private static final String COLUMN_IS_AVAILABLE = "is_available";
+
+    // Константы для таблицы методов оплаты
+    private static final String TABLE_PAYMENT_METHODS = "payment_methods";
+    private static final String COLUMN_PAYMENT_ID = "id";
+    private static final String COLUMN_PAYMENT_USER_EMAIL = "user_email";
+    private static final String COLUMN_PAYMENT_CARD_NUMBER = "card_number";
+    private static final String COLUMN_PAYMENT_CARD_HOLDER = "card_holder";
+    private static final String COLUMN_PAYMENT_EXPIRY_DATE = "expiry_date";
+    private static final String COLUMN_PAYMENT_CVV = "cvv";
+    private static final String COLUMN_PAYMENT_CARD_LAST_FOUR = "card_last_four";
+    private static final String COLUMN_PAYMENT_CREATED_AT = "created_at";
 
     // Синглтон паттерн
     public static synchronized DatabaseHelper getInstance(Context context) {
@@ -75,18 +97,88 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         createBookingsTable(db);
         createNotificationsTable(db);
         createCarsAvailabilityTable(db);
+        createPaymentMethodsTable(db);
         initDefaultCarStatuses(db);
         Log.d("DatabaseHelper", "Database created with all tables");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Удаляем старые таблицы и создаем новые
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_BOOKINGS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTIFICATIONS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CARS_AVAILABILITY);
-        onCreate(db);
+        if (oldVersion < 11) {
+            // Обновление с версии 10 на 11 - обновляем структуру таблиц
+            updateBookingsTable(db);
+            Log.d("DatabaseHelper", "Migrated from version " + oldVersion + " to " + newVersion);
+        } else if (oldVersion < 10) {
+            // Миграция с версии 9 на 10
+            createPaymentMethodsTable(db);
+            Log.d("DatabaseHelper", "Migrated from version " + oldVersion + " to " + newVersion);
+        } else if (oldVersion < 9) {
+            // Миграция с версии 8 на 9
+            String tempTable = TABLE_BOOKINGS + "_temp";
+
+            String createNewTable = "CREATE TABLE " + tempTable + "("
+                    + COLUMN_BOOKING_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + COLUMN_BOOKING_CAR_ID + " INTEGER NOT NULL,"
+                    + COLUMN_BOOKING_USER_EMAIL + " TEXT NOT NULL,"
+                    + COLUMN_BOOKING_CAR_NAME + " TEXT NOT NULL,"
+                    + COLUMN_BOOKING_PRICE_PER_DAY + " INTEGER NOT NULL,"
+                    + COLUMN_BOOKING_START_DATE + " TEXT NOT NULL,"
+                    + COLUMN_BOOKING_END_DATE + " TEXT NOT NULL,"
+                    + COLUMN_BOOKING_TOTAL_DAYS + " INTEGER NOT NULL,"
+                    + COLUMN_BOOKING_TOTAL_PRICE + " INTEGER NOT NULL,"
+                    + COLUMN_BOOKING_STATUS + " TEXT DEFAULT 'active',"
+                    + COLUMN_BOOKING_DATE + " TEXT NOT NULL,"
+                    + COLUMN_BOOKING_PICKUP_LOCATION + " TEXT,"
+                    + COLUMN_BOOKING_LOCATION_DETAILS + " TEXT,"
+                    + COLUMN_BOOKING_PAYMENT_METHOD + " TEXT DEFAULT 'credit_card',"
+                    + COLUMN_BOOKING_DELIVERY_TYPE + " TEXT DEFAULT 'self_pickup',"
+                    + COLUMN_BOOKING_DELIVERY_ADDRESS + " TEXT,"
+                    + COLUMN_BOOKING_DELIVERY_FEE + " INTEGER DEFAULT 0"
+                    + ")";
+            db.execSQL(createNewTable);
+
+            String copyData = "INSERT INTO " + tempTable + " ("
+                    + COLUMN_BOOKING_ID + ", " + COLUMN_BOOKING_CAR_ID + ", "
+                    + COLUMN_BOOKING_USER_EMAIL + ", " + COLUMN_BOOKING_CAR_NAME + ", "
+                    + COLUMN_BOOKING_PRICE_PER_DAY + ", " + COLUMN_BOOKING_START_DATE + ", "
+                    + COLUMN_BOOKING_END_DATE + ", " + COLUMN_BOOKING_TOTAL_DAYS + ", "
+                    + COLUMN_BOOKING_TOTAL_PRICE + ", " + COLUMN_BOOKING_STATUS + ", "
+                    + COLUMN_BOOKING_DATE + ") "
+                    + "SELECT " + COLUMN_BOOKING_ID + ", " + COLUMN_BOOKING_CAR_ID + ", "
+                    + COLUMN_BOOKING_USER_EMAIL + ", " + COLUMN_BOOKING_CAR_NAME + ", "
+                    + COLUMN_BOOKING_PRICE_PER_DAY + ", " + COLUMN_BOOKING_START_DATE + ", "
+                    + COLUMN_BOOKING_END_DATE + ", " + COLUMN_BOOKING_TOTAL_DAYS + ", "
+                    + COLUMN_BOOKING_TOTAL_PRICE + ", " + COLUMN_BOOKING_STATUS + ", "
+                    + COLUMN_BOOKING_DATE + " FROM " + TABLE_BOOKINGS;
+            db.execSQL(copyData);
+
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_BOOKINGS);
+            db.execSQL("ALTER TABLE " + tempTable + " RENAME TO " + TABLE_BOOKINGS);
+            createPaymentMethodsTable(db);
+
+            Log.d("DatabaseHelper", "Migrated from version " + oldVersion + " to " + newVersion);
+        } else {
+            // Полное пересоздание для других версий
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_BOOKINGS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTIFICATIONS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_CARS_AVAILABILITY);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_PAYMENT_METHODS);
+            onCreate(db);
+        }
+    }
+
+    private void updateBookingsTable(SQLiteDatabase db) {
+        // Обновляем структуру таблицы бронирований при необходимости
+        try {
+            // Проверяем существование нужных индексов
+            db.execSQL("CREATE INDEX IF NOT EXISTS idx_bookings_car_id ON " + TABLE_BOOKINGS + "(" + COLUMN_BOOKING_CAR_ID + ")");
+            db.execSQL("CREATE INDEX IF NOT EXISTS idx_bookings_user_email ON " + TABLE_BOOKINGS + "(" + COLUMN_BOOKING_USER_EMAIL + ")");
+            db.execSQL("CREATE INDEX IF NOT EXISTS idx_bookings_status ON " + TABLE_BOOKINGS + "(" + COLUMN_BOOKING_STATUS + ")");
+            db.execSQL("CREATE INDEX IF NOT EXISTS idx_bookings_dates ON " + TABLE_BOOKINGS + "(" + COLUMN_BOOKING_START_DATE + ", " + COLUMN_BOOKING_END_DATE + ")");
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error updating bookings table: " + e.getMessage());
+        }
     }
 
     @Override
@@ -126,9 +218,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_BOOKING_TOTAL_DAYS + " INTEGER NOT NULL,"
                 + COLUMN_BOOKING_TOTAL_PRICE + " INTEGER NOT NULL,"
                 + COLUMN_BOOKING_STATUS + " TEXT DEFAULT 'active',"
-                + COLUMN_BOOKING_DATE + " TEXT NOT NULL"
+                + COLUMN_BOOKING_DATE + " TEXT NOT NULL,"
+                + COLUMN_BOOKING_PICKUP_LOCATION + " TEXT,"
+                + COLUMN_BOOKING_LOCATION_DETAILS + " TEXT,"
+                + COLUMN_BOOKING_PAYMENT_METHOD + " TEXT DEFAULT 'credit_card',"
+                + COLUMN_BOOKING_DELIVERY_TYPE + " TEXT DEFAULT 'self_pickup',"
+                + COLUMN_BOOKING_DELIVERY_ADDRESS + " TEXT,"
+                + COLUMN_BOOKING_DELIVERY_FEE + " INTEGER DEFAULT 0"
                 + ")";
         db.execSQL(createBookingsTable);
+
+        // Создаем индексы для ускорения запросов
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_bookings_car_id ON " + TABLE_BOOKINGS + "(" + COLUMN_BOOKING_CAR_ID + ")");
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_bookings_user_email ON " + TABLE_BOOKINGS + "(" + COLUMN_BOOKING_USER_EMAIL + ")");
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_bookings_status ON " + TABLE_BOOKINGS + "(" + COLUMN_BOOKING_STATUS + ")");
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_bookings_dates ON " + TABLE_BOOKINGS + "(" + COLUMN_BOOKING_START_DATE + ", " + COLUMN_BOOKING_END_DATE + ")");
     }
 
     private void createNotificationsTable(SQLiteDatabase db) {
@@ -150,6 +254,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_IS_AVAILABLE + " INTEGER DEFAULT 1"
                 + ")";
         db.execSQL(createCarsAvailabilityTable);
+    }
+
+    private void createPaymentMethodsTable(SQLiteDatabase db) {
+        String createPaymentMethodsTable = "CREATE TABLE " + TABLE_PAYMENT_METHODS + "("
+                + COLUMN_PAYMENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_PAYMENT_USER_EMAIL + " TEXT NOT NULL,"
+                + COLUMN_PAYMENT_CARD_NUMBER + " TEXT NOT NULL,"
+                + COLUMN_PAYMENT_CARD_HOLDER + " TEXT NOT NULL,"
+                + COLUMN_PAYMENT_EXPIRY_DATE + " TEXT NOT NULL,"
+                + COLUMN_PAYMENT_CVV + " TEXT NOT NULL,"
+                + COLUMN_PAYMENT_CARD_LAST_FOUR + " TEXT NOT NULL,"
+                + COLUMN_PAYMENT_CREATED_AT + " INTEGER NOT NULL,"
+                + "FOREIGN KEY(" + COLUMN_PAYMENT_USER_EMAIL + ") REFERENCES "
+                + TABLE_USERS + "(" + COLUMN_EMAIL + ")"
+                + ")";
+        db.execSQL(createPaymentMethodsTable);
     }
 
     private void initDefaultCarStatuses(SQLiteDatabase db) {
@@ -329,6 +449,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(COLUMN_BOOKING_STATUS, booking.getStatus());
             values.put(COLUMN_BOOKING_DATE, booking.getBookingDate());
 
+            values.put(COLUMN_BOOKING_PICKUP_LOCATION, booking.getPickupLocation());
+            values.put(COLUMN_BOOKING_LOCATION_DETAILS, booking.getLocationDetails());
+            values.put(COLUMN_BOOKING_PAYMENT_METHOD, booking.getPaymentMethod());
+            values.put(COLUMN_BOOKING_DELIVERY_TYPE, booking.getDeliveryType());
+            values.put(COLUMN_BOOKING_DELIVERY_ADDRESS, booking.getDeliveryAddress());
+            values.put(COLUMN_BOOKING_DELIVERY_FEE, booking.getDeliveryFee());
+
             long result = db.insert(TABLE_BOOKINGS, null, values);
 
             if (result != -1) {
@@ -343,10 +470,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public synchronized boolean updateBookingStatus(long bookingId, String status) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_BOOKING_STATUS, status);
+
+            int result = db.update(TABLE_BOOKINGS, values,
+                    COLUMN_BOOKING_ID + " = ?", new String[]{String.valueOf(bookingId)});
+
+            return result > 0;
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error updating booking status: " + e.getMessage());
+            return false;
+        }
+    }
+
     public synchronized boolean cancelBooking(int bookingId) {
         SQLiteDatabase db = this.getWritableDatabase();
         try {
-            // Получаем информацию о бронировании
             Booking booking = getBookingById(bookingId);
 
             ContentValues values = new ContentValues();
@@ -404,6 +546,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 booking.setTotalPrice(cursor.getInt(cursor.getColumnIndex(COLUMN_BOOKING_TOTAL_PRICE)));
                 booking.setStatus(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKING_STATUS)));
                 booking.setBookingDate(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKING_DATE)));
+
+                booking.setPickupLocation(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKING_PICKUP_LOCATION)));
+                booking.setLocationDetails(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKING_LOCATION_DETAILS)));
+                booking.setPaymentMethod(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKING_PAYMENT_METHOD)));
+                booking.setDeliveryType(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKING_DELIVERY_TYPE)));
+                booking.setDeliveryAddress(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKING_DELIVERY_ADDRESS)));
+                booking.setDeliveryFee(cursor.getInt(cursor.getColumnIndex(COLUMN_BOOKING_DELIVERY_FEE)));
+
                 return booking;
             }
             return null;
@@ -442,6 +592,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     booking.setTotalPrice(cursor.getInt(cursor.getColumnIndex(COLUMN_BOOKING_TOTAL_PRICE)));
                     booking.setStatus(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKING_STATUS)));
                     booking.setBookingDate(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKING_DATE)));
+
+                    booking.setPickupLocation(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKING_PICKUP_LOCATION)));
+                    booking.setLocationDetails(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKING_LOCATION_DETAILS)));
+                    booking.setPaymentMethod(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKING_PAYMENT_METHOD)));
+                    booking.setDeliveryType(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKING_DELIVERY_TYPE)));
+                    booking.setDeliveryAddress(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKING_DELIVERY_ADDRESS)));
+                    booking.setDeliveryFee(cursor.getInt(cursor.getColumnIndex(COLUMN_BOOKING_DELIVERY_FEE)));
+
                     bookings.add(booking);
                 } while (cursor.moveToNext());
             }
@@ -464,7 +622,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             String query = "SELECT * FROM " + TABLE_BOOKINGS +
                     " WHERE " + COLUMN_BOOKING_CAR_ID + " = ?" +
-                    " AND " + COLUMN_BOOKING_STATUS + " = 'active'" +
+                    " AND " + COLUMN_BOOKING_STATUS + " IN ('active', 'paid', 'pending_payment')" +
                     " ORDER BY " + COLUMN_BOOKING_START_DATE + " ASC";
             cursor = db.rawQuery(query, new String[]{String.valueOf(carId)});
 
@@ -482,6 +640,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     booking.setTotalPrice(cursor.getInt(cursor.getColumnIndex(COLUMN_BOOKING_TOTAL_PRICE)));
                     booking.setStatus(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKING_STATUS)));
                     booking.setBookingDate(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKING_DATE)));
+
+                    booking.setPickupLocation(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKING_PICKUP_LOCATION)));
+                    booking.setLocationDetails(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKING_LOCATION_DETAILS)));
+                    booking.setPaymentMethod(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKING_PAYMENT_METHOD)));
+                    booking.setDeliveryType(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKING_DELIVERY_TYPE)));
+                    booking.setDeliveryAddress(cursor.getString(cursor.getColumnIndex(COLUMN_BOOKING_DELIVERY_ADDRESS)));
+                    booking.setDeliveryFee(cursor.getInt(cursor.getColumnIndex(COLUMN_BOOKING_DELIVERY_FEE)));
+
                     bookings.add(booking);
                 } while (cursor.moveToNext());
             }
@@ -623,7 +789,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int availableInt = cursor.getInt(cursor.getColumnIndex(COLUMN_IS_AVAILABLE));
                 return availableInt == 1;
             }
-            return true; // по умолчанию доступен
+            return true;
         } catch (Exception e) {
             Log.e("DatabaseHelper", "Error getting car base availability: " + e.getMessage());
             return false;
@@ -656,24 +822,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    // ОСНОВНОЙ МЕТОД ДЛЯ ПРОВЕРКИ ЗАБРОНИРОВАН ЛИ АВТОМОБИЛЬ НА ДАТЫ
     public synchronized boolean isCarBooked(int carId, String startDate, String endDate) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = null;
         try {
+            // Проверяем бронирования со статусами active, paid, pending_payment
+            // Условие пересечения дат:
+            // существующее бронирование (start, end) пересекается с запрашиваемыми датами (startDate, endDate)
             String query = "SELECT COUNT(*) FROM " + TABLE_BOOKINGS +
                     " WHERE " + COLUMN_BOOKING_CAR_ID + " = ?" +
-                    " AND " + COLUMN_BOOKING_STATUS + " = 'active'" +
-                    " AND NOT (" + COLUMN_BOOKING_END_DATE + " < ? OR " +
-                    COLUMN_BOOKING_START_DATE + " > ?)";
+                    " AND " + COLUMN_BOOKING_STATUS + " IN ('active', 'paid', 'pending_payment')" +
+                    " AND (" + COLUMN_BOOKING_START_DATE + " <= ? AND " + COLUMN_BOOKING_END_DATE + " >= ?)";
 
             cursor = db.rawQuery(query, new String[]{
                     String.valueOf(carId),
-                    startDate,
-                    endDate
+                    endDate,
+                    startDate
             });
 
             if (cursor != null && cursor.moveToFirst()) {
-                return cursor.getInt(0) > 0;
+                int count = cursor.getInt(0);
+                Log.d("DatabaseHelper", "isCarBooked: carId=" + carId + ", startDate=" + startDate +
+                        ", endDate=" + endDate + ", count=" + count);
+                return count > 0;
             }
             return false;
         } catch (Exception e) {
@@ -686,11 +858,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    // Упрощенная проверка бронирования (с использованием текущих дат)
+    public synchronized boolean isCarCurrentlyBooked(int carId) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        Calendar calendar = Calendar.getInstance();
+        String today = sdf.format(calendar.getTime());
+        calendar.add(Calendar.DAY_OF_MONTH, 30);
+        String futureDate = sdf.format(calendar.getTime());
+
+        return isCarBooked(carId, today, futureDate);
+    }
+
     public synchronized boolean isCarAvailableForDates(int carId, String startDate, String endDate) {
+        // Сначала проверяем, не на ремонте ли автомобиль
         if (!getCarBaseAvailability(carId)) {
+            Log.d("DatabaseHelper", "Car " + carId + " is on repair");
             return false;
         }
-        return !isCarBooked(carId, startDate, endDate);
+        // Затем проверяем, нет ли пересекающихся бронирований
+        boolean isBooked = isCarBooked(carId, startDate, endDate);
+        Log.d("DatabaseHelper", "Car " + carId + " is available for dates: " + !isBooked);
+        return !isBooked;
     }
 
     @SuppressLint("Range")
@@ -721,6 +909,138 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    // Получить все автомобили с их полной доступностью (с учетом бронирований)
+    @SuppressLint("Range")
+    public synchronized Map<Integer, Boolean> getAllCarsFullAvailability(String checkStartDate, String checkEndDate) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Map<Integer, Boolean> availabilityMap = new HashMap<>();
+        Cursor cursor = null;
+        try {
+            String query = "SELECT * FROM " + TABLE_CARS_AVAILABILITY;
+            cursor = db.rawQuery(query, null);
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    int carId = cursor.getInt(cursor.getColumnIndex(COLUMN_CAR_ID));
+                    int availableInt = cursor.getInt(cursor.getColumnIndex(COLUMN_IS_AVAILABLE));
+                    boolean isOnRepair = availableInt == 0;
+
+                    if (isOnRepair) {
+                        availabilityMap.put(carId, false);
+                    } else {
+                        boolean isBooked = isCarBooked(carId, checkStartDate, checkEndDate);
+                        availabilityMap.put(carId, !isBooked);
+                    }
+                } while (cursor.moveToNext());
+            }
+            return availabilityMap;
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error getting all cars full availability: " + e.getMessage());
+            return availabilityMap;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    // ===================== ОПЕРАЦИИ С МЕТОДАМИ ОПЛАТЫ =====================
+
+    public synchronized long addPaymentMethod(String userEmail, String cardNumber,
+                                              String cardHolder, String expiry,
+                                              String cvv, String lastFourDigits) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_PAYMENT_USER_EMAIL, userEmail);
+            values.put(COLUMN_PAYMENT_CARD_NUMBER, cardNumber);
+            values.put(COLUMN_PAYMENT_CARD_HOLDER, cardHolder);
+            values.put(COLUMN_PAYMENT_EXPIRY_DATE, expiry);
+            values.put(COLUMN_PAYMENT_CVV, cvv);
+            values.put(COLUMN_PAYMENT_CARD_LAST_FOUR, lastFourDigits);
+            values.put(COLUMN_PAYMENT_CREATED_AT, System.currentTimeMillis());
+
+            long result = db.insert(TABLE_PAYMENT_METHODS, null, values);
+
+            if (result != -1) {
+                addSystemNotification(userEmail, "Новая карта добавлена",
+                        "Карта **** " + lastFourDigits + " была успешно добавлена.");
+            }
+
+            return result;
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error adding payment method: " + e.getMessage());
+            return -1;
+        }
+    }
+
+    public synchronized Cursor getUserPaymentMethods(String email) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        try {
+            String query = "SELECT " + COLUMN_PAYMENT_CARD_LAST_FOUR + ", "
+                    + COLUMN_PAYMENT_EXPIRY_DATE + ", "
+                    + COLUMN_PAYMENT_CARD_HOLDER + " FROM " + TABLE_PAYMENT_METHODS +
+                    " WHERE " + COLUMN_PAYMENT_USER_EMAIL + " = ?" +
+                    " ORDER BY " + COLUMN_PAYMENT_CREATED_AT + " DESC" +
+                    " LIMIT 1";
+            return db.rawQuery(query, new String[]{email});
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error getting user payment methods: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public synchronized Cursor getAllUserPaymentMethods(String email) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        try {
+            String query = "SELECT * FROM " + TABLE_PAYMENT_METHODS +
+                    " WHERE " + COLUMN_PAYMENT_USER_EMAIL + " = ?" +
+                    " ORDER BY " + COLUMN_PAYMENT_CREATED_AT + " DESC";
+            return db.rawQuery(query, new String[]{email});
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error getting all user payment methods: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public synchronized boolean deletePaymentMethod(int paymentMethodId, String userEmail) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            int result = db.delete(TABLE_PAYMENT_METHODS,
+                    COLUMN_PAYMENT_ID + " = ? AND " + COLUMN_PAYMENT_USER_EMAIL + " = ?",
+                    new String[]{String.valueOf(paymentMethodId), userEmail});
+
+            if (result > 0) {
+                addSystemNotification(userEmail, "Карта удалена",
+                        "Карта была успешно удалена из вашего профиля.");
+            }
+
+            return result > 0;
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error deleting payment method: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public synchronized boolean deleteAllUserPaymentMethods(String userEmail) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            int rowsDeleted = db.delete(TABLE_PAYMENT_METHODS,
+                    COLUMN_PAYMENT_USER_EMAIL + " = ?",
+                    new String[]{userEmail});
+
+            if (rowsDeleted > 0) {
+                addSystemNotification(userEmail, "Все карты удалены",
+                        "Все ваши карты были удалены из профиля.");
+            }
+
+            return rowsDeleted > 0;
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error deleting all user payment methods: " + e.getMessage());
+            return false;
+        }
+    }
+
     // ===================== ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ =====================
 
     public synchronized void clearAllBookings() {
@@ -732,7 +1052,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    // Методы для создания стандартных уведомлений
     private void addWelcomeNotification(String userEmail) {
         addNotification(userEmail,
                 "Добро пожаловать!",

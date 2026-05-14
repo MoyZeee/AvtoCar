@@ -8,6 +8,7 @@ public class Car implements Serializable {
     private int pricePerDay;
     private String bodyType;
     private boolean available;
+    private boolean onRepair;
     private String transmission;
     private String fuelType;
     private int seats;
@@ -20,6 +21,7 @@ public class Car implements Serializable {
         this.pricePerDay = pricePerDay;
         this.bodyType = bodyType;
         this.available = available;
+        this.onRepair = !available;
         this.transmission = transmission;
         this.fuelType = fuelType;
         this.seats = seats;
@@ -32,14 +34,19 @@ public class Car implements Serializable {
     public int getPricePerDay() { return pricePerDay; }
     public String getBodyType() { return bodyType; }
     public boolean isAvailable() { return available; }
+    public boolean isOnRepair() { return onRepair; }
     public String getTransmission() { return transmission; }
     public String getFuelType() { return fuelType; }
     public int getSeats() { return seats; }
     public int getImageResId() { return imageResId; }
 
-    // СЕТТЕР ДЛЯ СТАТУСА (ДОБАВИТЬ)
+    // Сеттеры
     public void setAvailable(boolean available) {
         this.available = available;
+    }
+
+    public void setOnRepair(boolean onRepair) {
+        this.onRepair = onRepair;
     }
 
     public String getDescription() {

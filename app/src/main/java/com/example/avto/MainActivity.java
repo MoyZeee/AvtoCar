@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
@@ -21,7 +20,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.badge.BadgeDrawable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -31,9 +33,6 @@ public class MainActivity extends AppCompatActivity implements CarAdapter.OnBook
 
     private AutoCompleteTextView typeFilter;
     private AutoCompleteTextView priceFilter;
-    private ImageView profileButton;
-    private ImageView notificationsButton;
-    private TextView notificationBadge;
     private BottomNavigationView bottomNavigation;
     private SharedPreferences sharedPreferences;
     private RecyclerView carsRecyclerView;
@@ -58,15 +57,12 @@ public class MainActivity extends AppCompatActivity implements CarAdapter.OnBook
         String userEmail = sharedPreferences.getString("user_email", "");
         Log.d("MainActivity", "onCreate: userEmail = " + userEmail);
 
-        // ИСПРАВЛЕНИЕ: Используем синглтон DatabaseHelper
+        // Используем синглтон DatabaseHelper
         dbHelper = DatabaseHelper.getInstance(this);
 
         // Находим все View
         typeFilter = findViewById(R.id.typeFilter);
         priceFilter = findViewById(R.id.priceFilter);
-        profileButton = findViewById(R.id.profileButton);
-        notificationsButton = findViewById(R.id.notificationsButton);
-        notificationBadge = findViewById(R.id.notificationBadge);
         bottomNavigation = findViewById(R.id.bottomNavigation);
 
         totalCarsText = findViewById(R.id.totalCarsText);
@@ -88,21 +84,6 @@ public class MainActivity extends AppCompatActivity implements CarAdapter.OnBook
         carsRecyclerView.setAdapter(carAdapter);
 
         updateStatistics(originalCarList);
-
-        profileButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
-            startActivity(intent);
-        });
-
-        notificationsButton.setOnClickListener(v -> {
-            try {
-                Intent intent = new Intent(MainActivity.this, NotificationsActivity.class);
-                startActivity(intent);
-            } catch (Exception e) {
-                Toast.makeText(this, "Экран уведомлений временно недоступен", Toast.LENGTH_SHORT).show();
-                Log.e("MainActivity", "Error opening NotificationsActivity: " + e.getMessage());
-            }
-        });
 
         setupBottomNavigation();
         setupTypeFilter();
@@ -177,13 +158,7 @@ public class MainActivity extends AppCompatActivity implements CarAdapter.OnBook
 
         int unreadCount = dbHelper.getUnreadNotificationsCount(userEmail);
 
-        if (unreadCount > 0) {
-            notificationBadge.setVisibility(View.VISIBLE);
-            notificationBadge.setText(String.valueOf(unreadCount));
-        } else {
-            notificationBadge.setVisibility(View.GONE);
-        }
-
+        // Обновляем бейдж в нижней навигации
         BadgeDrawable badge = bottomNavigation.getOrCreateBadge(R.id.nav_notifications);
         if (unreadCount > 0) {
             badge.setNumber(unreadCount);
@@ -367,11 +342,9 @@ public class MainActivity extends AppCompatActivity implements CarAdapter.OnBook
         // Получаем актуальные статусы из БД (базовая доступность - не на ремонте)
         Map<Integer, Boolean> availabilityMap = new HashMap<>();
         try {
-            // ИСПРАВЛЕНИЕ: Используем новый метод для базовой доступности
             availabilityMap = dbHelper.getAllCarsBaseAvailability();
             Log.d("MainActivity", "Got base availability map with " + availabilityMap.size() + " entries");
 
-            // Логируем статусы для отладки
             for (Map.Entry<Integer, Boolean> entry : availabilityMap.entrySet()) {
                 Log.d("MainActivity", "Car " + entry.getKey() + " base availability: " + entry.getValue());
             }
@@ -379,29 +352,47 @@ public class MainActivity extends AppCompatActivity implements CarAdapter.OnBook
             Log.e("MainActivity", "Error getting availability map: " + e.getMessage());
         }
 
-        // Базовая информация о машинах (постоянная)
+        // Получаем текущие даты для проверки активных бронирований
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        Calendar calendar = Calendar.getInstance();
+        String today = sdf.format(calendar.getTime());
+        calendar.add(Calendar.DAY_OF_MONTH, 30); // Проверяем на месяц вперед
+        String futureDate = sdf.format(calendar.getTime());
+
+        // Базовая информация о машинах
         cars.add(new Car(1, "BMW X7", 7800, "Внедорожник", true, "Автомат", "Бензин", 5, R.drawable.car3));
         cars.add(new Car(2, "Porsche 911 Turbo S", 6500, "Купе", true, "Автомат", "Бензин", 2, R.drawable.car2));
         cars.add(new Car(3, "Toyota Land Cruiser", 4000, "Внедорожник", true, "Автомат", "Дизель", 7, R.drawable.car0));
         cars.add(new Car(4, "Audi A6", 5200, "Седан", true, "Автомат", "Бензин", 5, R.drawable.car4));
-        cars.add(new Car(5, "Mercedes-Benz C-Class", 5800, "Седан", false, "Автомат", "Бензин", 5, R.drawable.car5));
+        cars.add(new Car(5, "Mercedes-Benz C-Class", 5800, "Седан", true, "Автомат", "Бензин", 5, R.drawable.car5));
         cars.add(new Car(6, "Hyundai Solaris", 2800, "Седан", true, "Механика", "Бензин", 5, R.drawable.car6));
         cars.add(new Car(7, "Kia Rio", 2500, "Хэтчбек", true, "Автомат", "Бензин", 5, R.drawable.car7));
         cars.add(new Car(8, "Skoda Octavia", 3200, "Хэтчбек", true, "Автомат", "Бензин", 5, R.drawable.car8));
 
-        // Обновляем базовые статусы из БД (только статус "на ремонте")
+        // Обновляем статусы из БД с учетом бронирований
         for (Car car : cars) {
+            boolean isAvailable = true;
+            boolean isOnRepair = false;
+
+            // Проверяем статус ремонта из таблицы availability
             Boolean baseStatus = availabilityMap.get(car.getId());
-            if (baseStatus != null) {
-                // Только если машина на ремонте, помечаем как недоступную
-                if (!baseStatus) {
-                    car.setAvailable(false);
-                    Log.d("MainActivity", "Car " + car.getId() + " " + car.getName() + " - On repair, not available");
-                }
-                // Если baseStatus = true (доступна), оставляем текущий статус
-            } else {
-                Log.d("MainActivity", "No base status in DB for car " + car.getId() + ", using default");
+            if (baseStatus != null && !baseStatus) {
+                isOnRepair = true;
+                isAvailable = false;
+                Log.d("MainActivity", "Car " + car.getId() + " " + car.getName() + " - On repair");
             }
+
+            // Если не на ремонте, проверяем наличие активных бронирований
+            if (!isOnRepair) {
+                boolean hasActiveBookings = dbHelper.isCarBooked(car.getId(), today, futureDate);
+                if (hasActiveBookings) {
+                    isAvailable = false;
+                    Log.d("MainActivity", "Car " + car.getId() + " " + car.getName() + " - Has active bookings");
+                }
+            }
+
+            car.setAvailable(isAvailable);
+            car.setOnRepair(isOnRepair);
         }
 
         return cars;
@@ -443,13 +434,16 @@ public class MainActivity extends AppCompatActivity implements CarAdapter.OnBook
     public void onBookClick(Car car) {
         Log.d("MainActivity", "onBookClick: Нажата кнопка бронирования для " + car.getName());
 
-        // Проверяем базовую доступность (не на ремонте)
+        // Проверяем базовую доступность (не на ремонте и не забронирован)
         if (!car.isAvailable()) {
-            Toast.makeText(this, "Этот автомобиль в данный момент недоступен для бронирования", Toast.LENGTH_LONG).show();
+            if (car.isOnRepair()) {
+                Toast.makeText(this, "Этот автомобиль находится на ремонте и временно недоступен", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Этот автомобиль уже забронирован на выбранные даты", Toast.LENGTH_LONG).show();
+            }
             return;
         }
 
-        // ИСПРАВЛЕНИЕ: Уже используем синглтон, не создаем новый экземпляр
         String userEmail = sharedPreferences.getString("user_email", "");
 
         if (!isProfileFilledInDatabase(userEmail)) {
@@ -497,10 +491,7 @@ public class MainActivity extends AppCompatActivity implements CarAdapter.OnBook
                 boolean filled = passportSeries != null && !passportSeries.isEmpty() &&
                         passportNumber != null && !passportNumber.isEmpty() &&
                         licenseNumber != null && !licenseNumber.isEmpty();
-                Log.d("MainActivity", "isProfileFilledInDatabase: filled = " + filled +
-                        ", passportSeries = " + passportSeries +
-                        ", passportNumber = " + passportNumber +
-                        ", licenseNumber = " + licenseNumber);
+                Log.d("MainActivity", "isProfileFilledInDatabase: filled = " + filled);
                 cursor.close();
                 return filled;
             } else {
@@ -516,11 +507,9 @@ public class MainActivity extends AppCompatActivity implements CarAdapter.OnBook
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // ИСПРАВЛЕНИЕ: Не закрываем базу данных вручную, так как используем синглтон
-        // База данных будет закрыта автоматически
+        // База данных будет закрыта автоматически при использовании синглтона
     }
 
-    // Геттер для оригинального списка машин (если нужно)
     public List<Car> getOriginalCarList() {
         return originalCarList;
     }

@@ -1,12 +1,13 @@
 package com.example.avto;
 
-import java.io.Serializable;
-import java.text.ParseException;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class Booking implements Serializable {
+public class Booking implements Parcelable {
     private int id;
     private int carId;
     private String userEmail;
@@ -18,15 +19,21 @@ public class Booking implements Serializable {
     private int totalPrice;
     private String status;
     private String bookingDate;
+    private String pickupLocation;
+    private String locationDetails;
+    private String paymentMethod;
+    private String deliveryType;
+    private String deliveryAddress;
+    private int deliveryFee;
 
-    // Конструктор по умолчанию
-    public Booking() {
-    }
+    // Конструкторы
+    public Booking() {}
 
-    // Полный конструктор
     public Booking(int carId, String userEmail, String carName, int pricePerDay,
                    String startDate, String endDate, int totalDays, int totalPrice,
-                   String status, String bookingDate) {
+                   String status, String bookingDate, String pickupLocation,
+                   String locationDetails, String paymentMethod, String deliveryType,
+                   String deliveryAddress, int deliveryFee) {
         this.carId = carId;
         this.userEmail = userEmail;
         this.carName = carName;
@@ -37,7 +44,72 @@ public class Booking implements Serializable {
         this.totalPrice = totalPrice;
         this.status = status;
         this.bookingDate = bookingDate;
+        this.pickupLocation = pickupLocation;
+        this.locationDetails = locationDetails;
+        this.paymentMethod = paymentMethod;
+        this.deliveryType = deliveryType;
+        this.deliveryAddress = deliveryAddress;
+        this.deliveryFee = deliveryFee;
     }
+
+    // Parcelable implementation
+    protected Booking(Parcel in) {
+        id = in.readInt();
+        carId = in.readInt();
+        userEmail = in.readString();
+        carName = in.readString();
+        pricePerDay = in.readInt();
+        startDate = in.readString();
+        endDate = in.readString();
+        totalDays = in.readInt();
+        totalPrice = in.readInt();
+        status = in.readString();
+        bookingDate = in.readString();
+        pickupLocation = in.readString();
+        locationDetails = in.readString();
+        paymentMethod = in.readString();
+        deliveryType = in.readString();
+        deliveryAddress = in.readString();
+        deliveryFee = in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeInt(carId);
+        dest.writeString(userEmail);
+        dest.writeString(carName);
+        dest.writeInt(pricePerDay);
+        dest.writeString(startDate);
+        dest.writeString(endDate);
+        dest.writeInt(totalDays);
+        dest.writeInt(totalPrice);
+        dest.writeString(status);
+        dest.writeString(bookingDate);
+        dest.writeString(pickupLocation);
+        dest.writeString(locationDetails);
+        dest.writeString(paymentMethod);
+        dest.writeString(deliveryType);
+        dest.writeString(deliveryAddress);
+        dest.writeInt(deliveryFee);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Booking> CREATOR = new Creator<Booking>() {
+        @Override
+        public Booking createFromParcel(Parcel in) {
+            return new Booking(in);
+        }
+
+        @Override
+        public Booking[] newArray(int size) {
+            return new Booking[size];
+        }
+    };
 
     // Геттеры и сеттеры
     public int getId() {
@@ -128,77 +200,136 @@ public class Booking implements Serializable {
         this.bookingDate = bookingDate;
     }
 
-    // Методы форматирования
+    public String getPickupLocation() {
+        return pickupLocation;
+    }
+
+    public void setPickupLocation(String pickupLocation) {
+        this.pickupLocation = pickupLocation;
+    }
+
+    public String getLocationDetails() {
+        return locationDetails;
+    }
+
+    public void setLocationDetails(String locationDetails) {
+        this.locationDetails = locationDetails;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public String getDeliveryType() {
+        return deliveryType;
+    }
+
+    public void setDeliveryType(String deliveryType) {
+        this.deliveryType = deliveryType;
+    }
+
+    public String getDeliveryAddress() {
+        return deliveryAddress;
+    }
+
+    public void setDeliveryAddress(String deliveryAddress) {
+        this.deliveryAddress = deliveryAddress;
+    }
+
+    public int getDeliveryFee() {
+        return deliveryFee;
+    }
+
+    public void setDeliveryFee(int deliveryFee) {
+        this.deliveryFee = deliveryFee;
+    }
+
+    // Вспомогательные методы
     public String getFormattedDates() {
         try {
             SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             SimpleDateFormat outputFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
 
-            Date start = inputFormat.parse(this.startDate);
-            Date end = inputFormat.parse(this.endDate);
+            Date start = inputFormat.parse(startDate);
+            Date end = inputFormat.parse(endDate);
 
             return outputFormat.format(start) + " - " + outputFormat.format(end);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return this.startDate + " - " + this.endDate;
+        } catch (Exception e) {
+            return startDate + " - " + endDate;
         }
     }
 
     public String getFormattedTotalPrice() {
-        return String.format("%,d ₽", this.totalPrice);
+        return String.format(Locale.getDefault(), "%,d ₽", totalPrice);
     }
 
     public String getStatusInRussian() {
-        switch (this.status) {
+        switch (status) {
+            case "pending_payment":
+                return "Ожидает оплаты";
+            case "paid":
+                return "Оплачено";
             case "active":
                 return "Активно";
             case "completed":
                 return "Завершено";
             case "cancelled":
                 return "Отменено";
+            case "payment_failed":
+                return "Ошибка оплаты";
             default:
-                return this.status;
+                return status;
         }
     }
 
-    // Метод для проверки, можно ли отменить бронирование
-    public boolean canBeCancelled() {
-        if (!"active".equals(this.status)) {
-            return false;
-        }
-
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            Date startDateObj = sdf.parse(this.startDate);
-            Date today = new Date();
-
-            // Можно отменить только если до начала бронирования больше 24 часов
-            long diff = startDateObj.getTime() - today.getTime();
-            long hoursDiff = diff / (1000 * 60 * 60);
-
-            return hoursDiff > 24;
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return false;
+    public String getPaymentMethodInRussian() {
+        switch (paymentMethod) {
+            case "credit_card":
+                return "Банковская карта";
+            case "bitcoin":
+                return "Bitcoin (BTC)";
+            case "ethereum":
+                return "Ethereum (ETH)";
+            case "usdt":
+                return "Tether (USDT)";
+            default:
+                return paymentMethod;
         }
     }
 
-    // Метод для проверки, можно ли завершить бронирование
-    public boolean canBeCompleted() {
-        if (!"active".equals(this.status)) {
-            return false;
+    public String getDeliveryTypeInRussian() {
+        if ("delivery".equals(deliveryType)) {
+            return "Доставка";
+        } else {
+            return "Самовывоз";
         }
+    }
 
+    public String getFormattedBookingDate() {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            Date endDateObj = sdf.parse(this.endDate);
-            Date today = new Date();
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            SimpleDateFormat outputFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
 
-            // Можно завершить только если дата окончания уже прошла
-            return today.after(endDateObj);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return false;
+            Date date = inputFormat.parse(bookingDate);
+            return outputFormat.format(date);
+        } catch (Exception e) {
+            return bookingDate;
         }
+    }
+
+    public boolean isActive() {
+        return "active".equals(status) || "paid".equals(status) || "pending_payment".equals(status);
+    }
+
+    public boolean isCancelled() {
+        return "cancelled".equals(status);
+    }
+
+    public boolean isCompleted() {
+        return "completed".equals(status);
     }
 }

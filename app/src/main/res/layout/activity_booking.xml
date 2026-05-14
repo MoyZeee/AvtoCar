@@ -1,319 +1,940 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    tools:context=".BookingActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="vertical">
 
-        <!-- Заголовок -->
-        <RelativeLayout
+        <!-- ========================= -->
+        <!-- 1. HERO СЕКЦИЯ С ФОТО АВТО -->
+        <!-- ========================= -->
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp">
+            android:layout_height="280dp"
+            android:background="@drawable/gradient_hero">
 
             <ImageView
+                android:id="@+id/carImageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/placeholder_car"
+                android:contentDescription="Фото автомобиля" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/gradient_dark_overlay" />
+
+            <ImageButton
                 android:id="@+id/backButton"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_alignParentStart="true"
+                android:layout_margin="16dp"
+                android:background="@drawable/rounded_button_dark"
                 android:src="@drawable/ic_back"
-                app:tint="@color/black"
                 android:contentDescription="Назад"
-                android:scaleType="center"
-                android:background="?selectableItemBackgroundBorderless"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="Бронирование"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
-
-        </RelativeLayout>
-
-        <!-- Карточка автомобиля -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardBackgroundColor="@color/surface"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
+                app:tint="@color/white" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="20dp">
 
                 <TextView
                     android:id="@+id/carNameTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="BMW X7"
-                    android:textColor="@color/black"
-                    android:textSize="22sp"
+                    android:textColor="@color/white"
+                    android:textSize="28sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="8dp"/>
+                    android:shadowColor="@color/black"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:shadowRadius="4" />
 
                 <TextView
                     android:id="@+id/carDetailsTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Автомат, Бензин, 5 мест"
-                    android:textColor="@color/text_secondary"
+                    android:text="Автомат • Бензин • 5 мест"
+                    android:textColor="@color/white_80"
                     android:textSize="14sp"
-                    android:layout_marginBottom="8dp"/>
+                    android:layout_marginTop="4dp"
+                    android:shadowColor="@color/black"
+                    android:shadowRadius="2" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="8dp">
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/carPriceTextView"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="7,800 ₽/день"
-                        android:textColor="@color/primary"
-                        android:textSize="18sp"
-                        android:textStyle="bold"/>
+                        android:text="7 800 ₽"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
-                    <TextView
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/carTypeTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/rounded_tag_background"
-                        android:paddingHorizontal="12dp"
-                        android:paddingVertical="4dp"
                         android:text="Внедорожник"
                         android:textColor="@color/white"
-                        android:textSize="14sp"/>
+                        app:chipBackgroundColor="@color/primary_40"
+                        app:chipCornerRadius="8dp" />
                 </LinearLayout>
-
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </FrameLayout>
 
-        <!-- Выбор дат -->
-        <androidx.cardview.widget.CardView
+        <!-- ========================= -->
+        <!-- 2. КОНТЕНТ -->
+        <!-- ========================= -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardBackgroundColor="@color/surface"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="2dp">
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="24dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/rounded_info_background"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="12dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_info"
+                    app:tint="@color/primary" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Даты аренды"
+                    android:layout_marginStart="8dp"
+                    android:text="Минимальная аренда — 1 день"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="16dp"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="16dp">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginEnd="8dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Начало"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="14sp"
-                            android:layout_marginBottom="4dp"/>
-
-                        <TextView
-                            android:id="@+id/startDateTextView"
-                            android:layout_width="match_parent"
-                            android:layout_height="48dp"
-                            android:background="@drawable/rounded_edittext_background"
-                            android:padding="12dp"
-                            android:text="01.01.2024"
-                            android:textColor="@color/black"
-                            android:textSize="16sp"
-                            android:clickable="true"
-                            android:focusable="true"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Окончание"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="14sp"
-                            android:layout_marginBottom="4dp"/>
-
-                        <TextView
-                            android:id="@+id/endDateTextView"
-                            android:layout_width="match_parent"
-                            android:layout_height="48dp"
-                            android:background="@drawable/rounded_edittext_background"
-                            android:padding="12dp"
-                            android:text="02.01.2024"
-                            android:textColor="@color/black"
-                            android:textSize="16sp"
-                            android:clickable="true"
-                            android:focusable="true"/>
-                    </LinearLayout>
-
-                </LinearLayout>
-
+                    android:textSize="12sp" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
 
-        <!-- Итоговая информация -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            app:cardBackgroundColor="@color/surface"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="2dp">
-
-            <LinearLayout
+            <!-- ========================= -->
+            <!-- 3. ВЫБОР ДАТ -->
+            <!-- ========================= -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Стоимость аренды"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="16dp"/>
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="8dp">
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Период аренды:"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="14sp"/>
-
-                    <TextView
-                        android:id="@+id/totalDaysTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="1 день"
-                        android:textColor="@color/black"
-                        android:textSize="14sp"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="8dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Цена за день:"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="14sp"/>
-
-                    <TextView
-                        android:id="@+id/carPricePerDay"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="7,800 ₽"
-                        android:textColor="@color/black"
-                        android:textSize="14sp"
-                        android:textStyle="bold"/>
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginVertical="8dp"
-                    android:background="@color/outline"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="8dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Итого к оплате:"
-                        android:textColor="@color/black"
+                        android:text="Даты аренды"
                         android:textSize="16sp"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="16dp" />
 
-                    <TextView
-                        android:id="@+id/totalPriceTextView"
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:baselineAligned="false">
+
+                        <LinearLayout
+                            android:id="@+id/startDateLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/rounded_date_background"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:padding="12dp">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_calendar"
+                                app:tint="@color/primary" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="8dp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Начало"
+                                    android:textColor="@color/text_secondary"
+                                    android:textSize="12sp" />
+
+                                <TextView
+                                    android:id="@+id/startDateTextView"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Выберите дату"
+                                    android:textColor="@color/black"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/endDateLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/rounded_date_background"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:padding="12dp">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_calendar"
+                                app:tint="@color/primary" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="8dp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Окончание"
+                                    android:textColor="@color/text_secondary"
+                                    android:textSize="12sp" />
+
+                                <TextView
+                                    android:id="@+id/endDateTextView"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Выберите дату"
+                                    android:textColor="@color/black"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="7,800 ₽"
-                        android:textColor="@color/primary"
-                        android:textSize="20sp"
-                        android:textStyle="bold"/>
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/black_border"
+                        android:gravity="center"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="6dp">
+
+                        <TextView
+                            android:id="@+id/totalDaysCompactTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1 день"
+                            android:textColor="@color/primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
                 </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+            <!-- ========================= -->
+            <!-- 4. ДОСТАВКА / САМОВЫВОЗ - С CHECKBOX -->
+            <!-- ========================= -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white">
 
-        <!-- Кнопка подтверждения -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/confirmBookingButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            android:text="Забронировать"
-            android:textSize="16sp"
-            app:cornerRadius="12dp"
-            app:icon="@drawable/ic_check"
-            app:iconGravity="textStart"
-            app:iconPadding="8dp"
-            app:iconTint="@color/white"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Способ получения"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Самовывоз -->
+                    <LinearLayout
+                        android:id="@+id/selfPickupOption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="?selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="12dp">
+
+                        <CheckBox
+                            android:id="@+id/selfPickupCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp"
+                            android:checked="true" />
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_location"
+                            android:layout_marginEnd="12dp"
+                            app:tint="@color/primary" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Самовывоз"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Из пункта выдачи"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Бесплатно"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            android:background="@drawable/rounded_tag_success"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="4dp" />
+                    </LinearLayout>
+
+                    <!-- Доставка -->
+                    <LinearLayout
+                        android:id="@+id/deliveryOptionLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="?selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="12dp">
+
+                        <CheckBox
+                            android:id="@+id/deliveryCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp" />
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_delivery"
+                            android:layout_marginEnd="12dp"
+                            app:tint="@color/primary" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Доставка"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Доставим к вашему адресу"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/deliveryPriceTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="+1 500 ₽"
+                            android:textColor="@color/primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="4dp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Блок самовывоза -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/selfPickupCardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white"
+                android:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Пункт выдачи"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="12dp" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/outline"
+                        app:strokeWidth="0.5dp"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="12dp"
+                            android:gravity="center_vertical">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_location"
+                                app:tint="@color/primary"
+                                android:layout_marginEnd="12dp" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/pickupLocationTextView"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Тверская ул., 10, Москва"
+                                    android:textColor="@color/black"
+                                    android:textSize="14sp" />
+
+                                <TextView
+                                    android:id="@+id/locationDetailsTextView"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Ежедневно с 9:00 до 21:00"
+                                    android:textColor="@color/text_secondary"
+                                    android:textSize="12sp" />
+                            </LinearLayout>
+
+                            <ImageButton
+                                android:id="@+id/changeLocationButton"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:src="@drawable/ic_edit"
+                                android:background="?selectableItemBackgroundBorderless"
+                                android:contentDescription="Изменить"
+                                app:tint="@color/primary" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Другие пункты выдачи"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="8dp" />
+
+                    <LinearLayout
+                        android:id="@+id/locationsContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Блок доставки -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/deliveryCardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Адрес доставки"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="12dp" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:hint="Укажите адрес"
+                        app:startIconDrawable="@drawable/ic_home"
+                        app:startIconTint="@color/primary">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/deliveryAddressEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPostalAddress"
+                            android:maxLines="3" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Доставка занимает 1-2 часа"
+                        android:textSize="12sp"
+                        android:textColor="@color/text_secondary"
+                        android:drawableStart="@drawable/ic_info"
+                        android:drawablePadding="4dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Стоимость доставки:"
+                            android:textSize="14sp"
+                            android:textColor="@color/text_secondary" />
+
+                        <TextView
+                            android:id="@+id/deliveryFeeTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1 500 ₽"
+                            android:textSize="14sp"
+                            android:textColor="@color/primary"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ========================= -->
+            <!-- 6. ОПЛАТА - С CHECKBOX -->
+            <!-- ========================= -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Способ оплаты"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Банковская карта -->
+                    <LinearLayout
+                        android:id="@+id/cardPaymentOption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp"
+                        android:padding="8dp"
+                        android:background="?selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <CheckBox
+                            android:id="@+id/creditCardCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp"
+                            android:checked="true" />
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_credit_card"
+                            android:layout_marginEnd="12dp"
+                            app:tint="@color/primary" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Банковская карта"
+                            android:textSize="14sp"
+                            android:textColor="@color/black" />
+
+                        <TextView
+                            android:id="@+id/cardNumberTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Нет карт"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- Bitcoin -->
+                    <LinearLayout
+                        android:id="@+id/bitcoinPaymentOption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp"
+                        android:padding="8dp"
+                        android:background="?selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <CheckBox
+                            android:id="@+id/bitcoinCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp" />
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_bitcoin"
+                            android:layout_marginEnd="12dp"
+                            app:tint="@color/primary" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Bitcoin (BTC)"
+                            android:textSize="14sp"
+                            android:textColor="@color/black" />
+
+                        <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1-5 мин"
+                            android:textColor="@color/white"
+                            app:chipBackgroundColor="@color/primary"
+                            app:chipMinHeight="24dp" />
+                    </LinearLayout>
+
+                    <!-- Ethereum -->
+                    <LinearLayout
+                        android:id="@+id/ethereumPaymentOption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp"
+                        android:padding="8dp"
+                        android:background="?selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <CheckBox
+                            android:id="@+id/ethereumCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp" />
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_ethereum"
+                            android:layout_marginEnd="12dp"
+                            app:tint="@color/primary" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Ethereum (ETH)"
+                            android:textSize="14sp"
+                            android:textColor="@color/black" />
+                    </LinearLayout>
+
+                    <!-- USDT -->
+                    <LinearLayout
+                        android:id="@+id/usdtPaymentOption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:padding="8dp"
+                        android:background="?selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <CheckBox
+                            android:id="@+id/usdtCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp" />
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_usdt"
+                            android:layout_marginEnd="12dp"
+                            app:tint="@color/primary" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Tether (USDT)"
+                            android:textSize="14sp"
+                            android:textColor="@color/black" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/cryptoInfoTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="При выборе криптовалюты вы получите QR-код и адрес для оплаты"
+                        android:textSize="12sp"
+                        android:textColor="@color/text_secondary"
+                        android:padding="12dp"
+                        android:background="@drawable/rounded_info_background"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:id="@+id/cryptoRateContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Текущий курс:"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_secondary" />
+
+                        <TextView
+                            android:id="@+id/cryptoRateTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1 BTC ≈ 2 500 000 ₽"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/black" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="12dp">
+
+                        <Button
+                            android:id="@+id/addCardButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="6dp"
+                            android:text="+ Карта"
+                            style="@style/Widget.MaterialComponents.Button.TextButton"
+                            android:textColor="@color/primary" />
+
+                        <Button
+                            android:id="@+id/connectWalletButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="6dp"
+                            android:text="Кошелек"
+                            style="@style/Widget.MaterialComponents.Button.TextButton"
+                            android:textColor="@color/primary" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ========================= -->
+            <!-- 7. ИТОГО И КНОПКА БРОНИ -->
+            <!-- ========================= -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/primary_dark">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Итого к оплате"
+                        android:textColor="@color/white_70"
+                        android:textSize="14sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="16dp">
+
+                        <TextView
+                            android:id="@+id/totalPriceTextView"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="7 800 ₽"
+                            android:textColor="@color/white"
+                            android:textSize="32sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/totalDaysTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1 день"
+                            android:textColor="@color/white_70"
+                            android:textSize="14sp"
+                            android:layout_gravity="bottom" />
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/confirmBookingButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:text="Забронировать"
+                        app:cornerRadius="16dp"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:icon="@drawable/ic_check"
+                        app:iconGravity="textStart"
+                        app:iconPadding="8dp"
+                        android:backgroundTint="@color/white"
+                        android:textColor="@color/primary_dark" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Бесплатная отмена за 24 часа"
+                        android:textColor="@color/white_60"
+                        android:textSize="12sp"
+                        android:drawableStart="@drawable/ic_check_circle"
+                        android:drawablePadding="4dp"
+                        android:layout_gravity="center" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
     </LinearLayout>
-
 </ScrollView>

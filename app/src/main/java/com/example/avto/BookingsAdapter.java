@@ -3,12 +3,13 @@ package com.example.avto;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.button.MaterialButton;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,7 +25,7 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.Bookin
     public interface OnBookingActionListener {
         void onCancelClick(Booking booking);
         void onCompleteClick(Booking booking);
-        void onEditClick(Booking booking);
+        void onBookingClick(Booking booking);
     }
 
     public BookingsAdapter(List<Booking> bookingsList, OnBookingActionListener listener) {
@@ -48,7 +49,7 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.Bookin
 
     @Override
     public int getItemCount() {
-        return bookingsList.size();
+        return bookingsList != null ? bookingsList.size() : 0;
     }
 
     public void setBookings(List<Booking> bookings) {
@@ -67,8 +68,9 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.Bookin
         private TextView priceTextView;
         private TextView statusTextView;
         private TextView daysTextView;
-        private Button cancelButton;
-        private Button completeButton;
+        private MaterialButton cancelButton;
+        private MaterialButton completeButton;
+        private View actionsLayout;
 
         BookingViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -79,59 +81,123 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.Bookin
             daysTextView = itemView.findViewById(R.id.daysTextView);
             cancelButton = itemView.findViewById(R.id.cancelButton);
             completeButton = itemView.findViewById(R.id.completeButton);
+            actionsLayout = itemView.findViewById(R.id.actionsLayout);
+
+            // Добавляем обработчик клика на всю карточку
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION && listener != null) {
+                    listener.onBookingClick(bookingsList.get(position));
+                }
+            });
         }
 
         void bind(Booking booking) {
+            if (booking == null) return;
+
+            // Базовые данные
             carNameTextView.setText(booking.getCarName());
             datesTextView.setText(booking.getFormattedDates());
             priceTextView.setText(booking.getFormattedTotalPrice());
-            daysTextView.setText(booking.getTotalDays() + " дней");
 
+            int days = booking.getTotalDays();
+            daysTextView.setText(days + " " + getDayWord(days));
+
+            // Статус
             String status = booking.getStatus();
-            statusTextView.setText(booking.getStatusInRussian());
+            String statusText = booking.getStatusInRussian();
+            statusTextView.setText(statusText);
 
-            cancelButton.setVisibility(View.GONE);
-            completeButton.setVisibility(View.GONE);
+            // Установка цвета и фона статуса
+            int backgroundColor;
+            int textColor;
 
             switch (status) {
                 case "active":
-                    statusTextView.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.green));
-
-                    if (isBeforeStartDate(booking.getStartDate())) {
-                        cancelButton.setVisibility(View.VISIBLE);
-                        cancelButton.setText("Отменить");
-                        cancelButton.setEnabled(true);
-                    } else if (isAfterEndDate(booking.getEndDate())) {
-                        completeButton.setVisibility(View.VISIBLE);
-                        completeButton.setText("Завершить");
-                        completeButton.setEnabled(true);
-                    } else {
-                        cancelButton.setVisibility(View.VISIBLE);
-                        cancelButton.setText("Отменить");
-                        cancelButton.setEnabled(true);
-                    }
+                case "paid":
+                    backgroundColor = R.color.green;
+                    textColor = android.R.color.white;
                     break;
-
+                case "pending_payment":
+                    backgroundColor = R.color.orange;
+                    textColor = android.R.color.white;
+                    break;
                 case "completed":
-                    statusTextView.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.blue));
+                    backgroundColor = R.color.blue;
+                    textColor = android.R.color.white;
                     break;
-
                 case "cancelled":
-                    statusTextView.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.red));
+                case "payment_failed":
+                    backgroundColor = R.color.red;
+                    textColor = android.R.color.white;
                     break;
+                default:
+                    backgroundColor = R.color.text_secondary;
+                    textColor = android.R.color.white;
             }
 
-            cancelButton.setOnClickListener(v -> {
-                if (listener != null) {
-                    listener.onCancelClick(booking);
-                }
-            });
+            try {
+                statusTextView.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), backgroundColor));
+                statusTextView.setTextColor(ContextCompat.getColor(itemView.getContext(), textColor));
+            } catch (Exception e) {
+                // Используем дефолтные цвета
+                statusTextView.setBackgroundColor(0xFF4CAF50); // зеленый
+                statusTextView.setTextColor(0xFFFFFFFF); // белый
+            }
 
-            completeButton.setOnClickListener(v -> {
-                if (listener != null) {
-                    listener.onCompleteClick(booking);
+            // Управление видимостью кнопок
+            actionsLayout.setVisibility(View.GONE);
+            cancelButton.setVisibility(View.GONE);
+            completeButton.setVisibility(View.GONE);
+
+            if (status.equals("active") || status.equals("paid") || status.equals("pending_payment")) {
+                actionsLayout.setVisibility(View.VISIBLE);
+
+                if (isBeforeStartDate(booking.getStartDate())) {
+                    // До начала бронирования - можно только отменить
+                    cancelButton.setVisibility(View.VISIBLE);
+                    cancelButton.setText("Отменить");
+                    cancelButton.setOnClickListener(v -> {
+                        if (listener != null) {
+                            listener.onCancelClick(booking);
+                        }
+                    });
+
+                    completeButton.setVisibility(View.GONE);
+                } else if (isAfterEndDate(booking.getEndDate())) {
+                    // После окончания бронирования - можно завершить
+                    completeButton.setVisibility(View.VISIBLE);
+                    completeButton.setText("Завершить");
+                    completeButton.setOnClickListener(v -> {
+                        if (listener != null) {
+                            listener.onCompleteClick(booking);
+                        }
+                    });
+
+                    cancelButton.setVisibility(View.GONE);
+                } else {
+                    // Во время бронирования - можно досрочно завершить
+                    cancelButton.setVisibility(View.VISIBLE);
+                    cancelButton.setText("Досрочно завершить");
+                    cancelButton.setOnClickListener(v -> {
+                        if (listener != null) {
+                            listener.onCancelClick(booking);
+                        }
+                    });
+
+                    completeButton.setVisibility(View.GONE);
                 }
-            });
+            }
+        }
+
+        private String getDayWord(int days) {
+            if (days % 10 == 1 && days % 100 != 11) {
+                return "день";
+            } else if (days % 10 >= 2 && days % 10 <= 4 && (days % 100 < 10 || days % 100 >= 20)) {
+                return "дня";
+            } else {
+                return "дней";
+            }
         }
 
         private boolean isBeforeStartDate(String startDateStr) {
@@ -140,12 +206,16 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.Bookin
                 Date startDate = sdf.parse(startDateStr);
                 Date today = new Date();
 
-                sdf = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
-                int start = Integer.parseInt(sdf.format(startDate));
-                int current = Integer.parseInt(sdf.format(today));
+                // Сравниваем только даты, без времени
+                SimpleDateFormat dateOnlyFormat = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
+                int start = Integer.parseInt(dateOnlyFormat.format(startDate));
+                int current = Integer.parseInt(dateOnlyFormat.format(today));
 
                 return current < start;
             } catch (ParseException e) {
+                e.printStackTrace();
+                return false;
+            } catch (Exception e) {
                 e.printStackTrace();
                 return false;
             }
@@ -157,12 +227,16 @@ public class BookingsAdapter extends RecyclerView.Adapter<BookingsAdapter.Bookin
                 Date endDate = sdf.parse(endDateStr);
                 Date today = new Date();
 
-                sdf = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
-                int end = Integer.parseInt(sdf.format(endDate));
-                int current = Integer.parseInt(sdf.format(today));
+                // Сравниваем только даты, без времени
+                SimpleDateFormat dateOnlyFormat = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
+                int end = Integer.parseInt(dateOnlyFormat.format(endDate));
+                int current = Integer.parseInt(dateOnlyFormat.format(today));
 
                 return current > end;
             } catch (ParseException e) {
+                e.printStackTrace();
+                return false;
+            } catch (Exception e) {
                 e.printStackTrace();
                 return false;
             }

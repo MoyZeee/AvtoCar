@@ -32,7 +32,6 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.ViewHolder> {
         this.onBookClickListener = listener;
     }
 
-    // Добавлен геттер для cars
     public List<Car> getCars() {
         return cars;
     }
@@ -49,7 +48,7 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Car car = cars.get(position);
 
-        // ВАЖНО: Устанавливаем изображение автомобиля
+        // Устанавливаем изображение автомобиля
         holder.carImage.setImageResource(car.getImageResId());
 
         // Устанавливаем данные
@@ -57,18 +56,32 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.ViewHolder> {
         holder.carDetails.setText(car.getDescription());
         holder.carPrice.setText(car.getFormattedPrice());
 
-        // Устанавливаем статус
+        // Устанавливаем статус и цвет бейджа
         if (car.isAvailable()) {
             holder.statusBadge.setText("ДОСТУПНО");
             holder.statusBadge.setBackgroundResource(R.drawable.badge_available);
             holder.bookButton.setEnabled(true);
             holder.bookButton.setAlpha(1.0f);
+            holder.bookButton.setBackgroundTintList(
+                    androidx.core.content.ContextCompat.getColorStateList(context, R.color.primary_dark)
+            );
+            holder.bookButton.setText("Забронировать");
             holder.bookButton.setContentDescription("Забронировать " + car.getName());
         } else {
-            holder.statusBadge.setText("ЗАНЯТО");
-            holder.statusBadge.setBackgroundResource(R.drawable.badge_unavailable);
+            if (car.isOnRepair()) {
+                holder.statusBadge.setText("НА РЕМОНТЕ");
+                holder.statusBadge.setBackgroundResource(R.drawable.badge_maintenance);
+                holder.bookButton.setText("На ремонте");
+            } else {
+                holder.statusBadge.setText("ЗАБРОНИРОВАН");
+                holder.statusBadge.setBackgroundResource(R.drawable.badge_booked);
+                holder.bookButton.setText("Забронирован");
+            }
             holder.bookButton.setEnabled(false);
             holder.bookButton.setAlpha(0.5f);
+            holder.bookButton.setBackgroundTintList(
+                    androidx.core.content.ContextCompat.getColorStateList(context, R.color.gray_500)
+            );
             holder.bookButton.setContentDescription(car.getName() + " недоступен для бронирования");
         }
 
@@ -100,6 +113,14 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.ViewHolder> {
         holder.bookButton.setOnClickListener(v -> {
             if (car.isAvailable() && onBookClickListener != null) {
                 onBookClickListener.onBookClick(car);
+            } else if (!car.isAvailable() && !car.isOnRepair()) {
+                android.widget.Toast.makeText(context,
+                        "Автомобиль уже забронирован на выбранные даты",
+                        android.widget.Toast.LENGTH_SHORT).show();
+            } else if (car.isOnRepair()) {
+                android.widget.Toast.makeText(context,
+                        "Автомобиль на ремонте и временно недоступен",
+                        android.widget.Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -117,11 +138,9 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.ViewHolder> {
 
     private void updateFavoriteButton(ImageView button, int carId, boolean isFavorite) {
         if (isFavorite) {
-            // В избранном
             button.setImageResource(R.drawable.ic_favorite);
             button.setColorFilter(ContextCompat.getColor(context, R.color.error_red));
         } else {
-            // Не в избранном
             button.setImageResource(R.drawable.ic_favorite_border);
             button.setColorFilter(ContextCompat.getColor(context, R.color.primary));
         }
@@ -132,7 +151,7 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
-    // Класс ViewHolder (С CardView)
+    // Класс ViewHolder
     static class ViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
         ImageView carImage;

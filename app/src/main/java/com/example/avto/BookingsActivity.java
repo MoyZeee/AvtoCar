@@ -2,6 +2,7 @@ package com.example.avto;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +19,7 @@ public class BookingsActivity extends AppCompatActivity implements BookingsAdapt
     private BookingsAdapter adapter;
     private DatabaseHelper dbHelper;
     private List<Booking> bookingsList = new ArrayList<>();
+    private ImageView backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,8 +28,13 @@ public class BookingsActivity extends AppCompatActivity implements BookingsAdapt
 
         dbHelper = DatabaseHelper.getInstance(this);
 
+        // Находим кнопку назад
+        backButton = findViewById(R.id.backButton);
         recyclerView = findViewById(R.id.recyclerViewBookings);
         noBookingsText = findViewById(R.id.noBookingsText);
+
+        // Устанавливаем обработчик клика для кнопки назад
+        backButton.setOnClickListener(v -> finish());
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -56,6 +63,11 @@ public class BookingsActivity extends AppCompatActivity implements BookingsAdapt
     }
 
     @Override
+    public void onBookingClick(Booking booking) {
+
+    }
+
+    @Override
     public void onCancelClick(Booking booking) {
         boolean cancelled = dbHelper.cancelBooking(booking.getId());
         if (cancelled) {
@@ -71,10 +83,6 @@ public class BookingsActivity extends AppCompatActivity implements BookingsAdapt
         }
     }
 
-    @Override
-    public void onEditClick(Booking booking) {
-        // Реализуйте при необходимости
-    }
 
     @Override
     protected void onDestroy() {

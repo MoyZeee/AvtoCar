@@ -10,6 +10,7 @@
     <string name="search_icon">Иконка поиска</string>
     <string name="cars_list_desc">Список доступных автомобилей</string>
     <string name="add_car">Добавить новый автомобиль</string>
+    <string name="change_location">Изменить местоположение</string>
 
     <!-- Для фильтров (добавьте эти строки) -->
     <string name="car_type_hint">Тип авто</string>

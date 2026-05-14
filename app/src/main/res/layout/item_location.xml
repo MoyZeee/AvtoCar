@@ -1,6 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/item_location"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="1dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?selectableItemBackground">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Название локации -->
+        <TextView
+            android:id="@+id/locationNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Москва, ул. Тверская, 10"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp"/>
+
+        <!-- Детали локации -->
+        <TextView
+            android:id="@+id/locationDetailsTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Парковка у бизнес-центра, этаж B2"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Информация в строку -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="4dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_distance"
+                android:layout_marginEnd="4dp"
+                app:tint="@color/text_secondary"/>
+
+            <TextView
+                android:id="@+id/locationDistanceTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5.0 км"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"
+                android:layout_marginEnd="12dp"/>
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_time"
+                android:layout_marginEnd="4dp"
+                app:tint="@color/text_secondary"/>
+
+            <TextView
+                android:id="@+id/locationHoursTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="09:00 - 22:00"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"/>
+        </LinearLayout>
+
+        <!-- Статус доступности -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:background="@drawable/circle_green"
+                android:layout_marginEnd="6dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Доступно сейчас"
+                android:textColor="@color/success"
+                android:textSize="12sp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

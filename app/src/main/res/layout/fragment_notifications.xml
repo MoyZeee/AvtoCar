@@ -22,7 +22,7 @@
 
         <!-- Кнопка назад -->
         <ImageView
-            android:id="@+id/backButton"
+            android:id="@+id/backArrow"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:padding="12dp"

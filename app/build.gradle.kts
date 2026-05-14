@@ -47,6 +47,9 @@ dependencies {
     // Для работы с анимациями
     implementation("androidx.dynamicanimation:dynamicanimation:1.0.0")
 
+    // Для генерации QR-кода
+    implementation("com.google.zxing:core:3.5.1")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
