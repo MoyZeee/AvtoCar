@@ -32,13 +32,20 @@ public class LoginActivity extends AppCompatActivity {
     private static final long CLICK_DELAY = 1000L;
     private final Handler handler = new Handler(Looper.getMainLooper());
 
+    // Задержка для показа ошибок после прекращения ввода
+    private static final int VALIDATION_DELAY = 800;
+    private final Runnable emailValidationRunnable = this::validateEmailAfterInput;
+    private final Runnable passwordValidationRunnable = this::validatePasswordAfterInput;
+
+    private boolean isEmailValidated = false;
+    private boolean isPasswordValidated = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Используем синглтон
         dbHelper = DatabaseHelper.getInstance(this);
         sharedPreferences = getSharedPreferences("user_profile", MODE_PRIVATE);
 
@@ -59,70 +66,137 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        // Слушатели изменений текста
+        // Слушатели изменений текста с задержкой валидации
         binding.etEmail.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Очищаем ошибку при вводе, но не показываем новую сразу
+                binding.tilEmail.setError(null);
+                binding.tilEmail.setHelperText("Введите ваш email");
+                binding.tilEmail.setHelperTextColor(ColorStateList.valueOf(
+                        ContextCompat.getColor(LoginActivity.this, R.color.text_secondary)));
 
-            @Override
-            public void afterTextChanged(Editable s) {
-                validateEmail(s.toString());
-                updateLoginButtonState();
+                // Отменяем предыдущую валидацию и запускаем новую с задержкой
+                handler.removeCallbacks(emailValidationRunnable);
+                handler.postDelayed(emailValidationRunnable, VALIDATION_DELAY);
             }
+            @Override public void afterTextChanged(Editable s) {}
         });
 
         binding.etPassword.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Очищаем ошибку при вводе
+                binding.tilPassword.setError(null);
+                binding.tilPassword.setHelperText("Минимум 8 символов");
+                binding.tilPassword.setHelperTextColor(ColorStateList.valueOf(
+                        ContextCompat.getColor(LoginActivity.this, R.color.text_secondary)));
 
-            @Override
-            public void afterTextChanged(Editable s) {
-                validatePassword(s.toString());
-                updateLoginButtonState();
+                // Отменяем предыдущую валидацию и запускаем новую с задержкой
+                handler.removeCallbacks(passwordValidationRunnable);
+                handler.postDelayed(passwordValidationRunnable, VALIDATION_DELAY);
             }
+            @Override public void afterTextChanged(Editable s) {}
         });
 
         // Обработчик кнопки входа
         binding.btnLogin.setOnClickListener(v -> {
             if (System.currentTimeMillis() - lastClickTime < CLICK_DELAY) return;
             lastClickTime = System.currentTimeMillis();
-            login();
+
+            // Принудительная валидация перед входом
+            String email = binding.etEmail.getText().toString().trim();
+            String password = binding.etPassword.getText().toString();
+
+            validateEmailNow(email);
+            validatePasswordNow(password);
+
+            if (isEmailValidated && isPasswordValidated) {
+                login();
+            } else {
+                // Показываем Snackbar с ошибкой
+                String errorMsg = "";
+                if (!isEmailValidated && !isPasswordValidated) {
+                    errorMsg = "Введите корректный email и пароль";
+                } else if (!isEmailValidated) {
+                    errorMsg = "Введите корректный email";
+                } else if (!isPasswordValidated) {
+                    errorMsg = "Пароль должен содержать минимум 8 символов, буквы и цифры";
+                }
+                Snackbar.make(binding.getRoot(), errorMsg, Snackbar.LENGTH_SHORT).show();
+            }
         });
+
+        // Инициализация начального состояния
+        updateLoginButtonState();
     }
 
-    private void validateEmail(String email) {
+    // Валидация после завершения ввода (с задержкой)
+    private void validateEmailAfterInput() {
+        String email = binding.etEmail.getText().toString().trim();
+        validateEmailNow(email);
+    }
+
+    private void validatePasswordAfterInput() {
+        String password = binding.etPassword.getText().toString();
+        validatePasswordNow(password);
+    }
+
+    // Основной метод валидации email
+    private void validateEmailNow(String email) {
         if (email.isEmpty()) {
             binding.tilEmail.setError(null);
             binding.tilEmail.setHelperText("Введите ваш email");
+            binding.tilEmail.setHelperTextColor(ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.text_secondary)));
+            isEmailValidated = false;
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.tilEmail.setError("Введите корректный email");
+            binding.tilEmail.setError("Введите корректный email (пример: name@mail.ru)");
+            binding.tilEmail.setHelperText("✗ Некорректный email");
+            binding.tilEmail.setHelperTextColor(ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.error)));
+            isEmailValidated = false;
             shakeView(binding.tilEmail);
         } else {
             binding.tilEmail.setError(null);
-            binding.tilEmail.setHelperText("✓ Корректно");
+            binding.tilEmail.setHelperText("✓ Email корректен");
+            binding.tilEmail.setHelperTextColor(ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.success)));
+            isEmailValidated = true;
         }
+        updateLoginButtonState();
     }
 
-    private void validatePassword(String password) {
+    // Основной метод валидации пароля
+    private void validatePasswordNow(String password) {
         if (password.isEmpty()) {
-            binding.tilPassword.setHelperText("Минимум 8 символов");
-            binding.tilPassword.setHelperTextColor(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.text_secondary)));
+            binding.tilPassword.setHelperText("Минимум 8 символов, буквы и цифры");
+            binding.tilPassword.setHelperTextColor(ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.text_secondary)));
             binding.tilPassword.setError(null);
+            isPasswordValidated = false;
         } else if (password.length() < 8) {
-            binding.tilPassword.setHelperText("Минимум 8 символов");
-            binding.tilPassword.setHelperTextColor(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.error)));
-            binding.tilPassword.setError("Минимум 8 символов");
+            binding.tilPassword.setError("Пароль слишком короткий");
+            binding.tilPassword.setHelperText("✗ Минимум 8 символов");
+            binding.tilPassword.setHelperTextColor(ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.error)));
+            isPasswordValidated = false;
             shakeView(binding.tilPassword);
         } else if (!isPasswordComplex(password)) {
-            binding.tilPassword.setHelperText("Должен содержать буквы и цифры");
-            binding.tilPassword.setHelperTextColor(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.error)));
-            binding.tilPassword.setError("Должен содержать буквы и цифры");
+            binding.tilPassword.setError("Пароль должен содержать буквы и цифры");
+            binding.tilPassword.setHelperText("✗ Нужны буквы и цифры");
+            binding.tilPassword.setHelperTextColor(ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.error)));
+            isPasswordValidated = false;
             shakeView(binding.tilPassword);
         } else {
             binding.tilPassword.setHelperText("✓ Надежный пароль");
-            binding.tilPassword.setHelperTextColor(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.success)));
+            binding.tilPassword.setHelperTextColor(ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.success)));
             binding.tilPassword.setError(null);
+            isPasswordValidated = true;
         }
+        updateLoginButtonState();
     }
 
     private boolean isPasswordComplex(String password) {
@@ -137,15 +211,20 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void updateLoginButtonState() {
-        String email = binding.etEmail.getText().toString();
-        String password = binding.etPassword.getText().toString();
+        // Кнопка становится активной только когда оба поля валидны
+        boolean isEnabled = isEmailValidated && isPasswordValidated;
 
-        boolean isEmailValid = Patterns.EMAIL_ADDRESS.matcher(email).matches();
-        boolean isPasswordValid = password.length() >= 8 && isPasswordComplex(password);
-        boolean isFormValid = isEmailValid && isPasswordValid;
+        binding.btnLogin.setEnabled(isEnabled);
+        binding.btnLogin.setAlpha(isEnabled ? 1.0f : 0.6f);
 
-        binding.btnLogin.setEnabled(isFormValid);
-        binding.btnLogin.setAlpha(isFormValid ? 1.0f : 0.5f);
+        // Обновляем анимацию кнопки
+        if (isEnabled) {
+            binding.btnLogin.animate()
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .setDuration(200)
+                    .start();
+        }
     }
 
     private void login() {
@@ -163,7 +242,6 @@ public class LoginActivity extends AppCompatActivity {
                     if (dbHelper.checkUser(email, password)) {
                         Toast.makeText(LoginActivity.this, "Вход выполнен успешно!", Toast.LENGTH_SHORT).show();
 
-                        // Сохраняем email пользователя
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString("user_email", email);
                         editor.apply();
@@ -177,6 +255,12 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         Toast.makeText(LoginActivity.this, "Неверный email или пароль", Toast.LENGTH_SHORT).show();
                         shakeView(binding.btnLogin);
+
+                        // Сбрасываем валидацию пароля
+                        isPasswordValidated = false;
+                        binding.tilPassword.setError("Неверный email или пароль");
+                        binding.etPassword.setText("");
+                        updateLoginButtonState();
                     }
                 });
             } catch (InterruptedException e) {
@@ -194,8 +278,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private void hideProgress() {
         binding.progressBar.setVisibility(View.GONE);
-        binding.btnLogin.setAlpha(binding.btnLogin.isEnabled() ? 1.0f : 0.5f);
-        binding.btnLogin.setEnabled(true);
+        binding.btnLogin.setAlpha(binding.btnLogin.isEnabled() ? 1.0f : 0.6f);
+        binding.btnLogin.setEnabled(binding.btnLogin.isEnabled());
     }
 
     private boolean isProfileFilled(String email) {
@@ -239,6 +323,8 @@ public class LoginActivity extends AppCompatActivity {
         String savedEmail = sharedPreferences.getString("user_email", "");
         if (!savedEmail.isEmpty()) {
             binding.etEmail.setText(savedEmail);
+
+            handler.postDelayed(emailValidationRunnable, 100);
         }
         binding.btnLoginTab.setChecked(true);
     }
@@ -246,6 +332,8 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        // Удаляем все колбэки из Handler при уничтожении
+        handler.removeCallbacks(emailValidationRunnable);
+        handler.removeCallbacks(passwordValidationRunnable);
     }
 }

@@ -20,16 +20,30 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.ViewHolder> {
     private Context context;
     private List<Car> cars;
     private OnBookClickListener onBookClickListener;
+    private OnFavoriteClickListener onFavoriteClickListener;
     private Set<Integer> favorites = new HashSet<>();
 
     public interface OnBookClickListener {
         void onBookClick(Car car);
     }
 
-    public CarAdapter(Context context, List<Car> cars, OnBookClickListener listener) {
+    public interface OnFavoriteClickListener {
+        void onFavoriteClick(int carId, boolean isFavorite);
+    }
+
+    public CarAdapter(Context context, List<Car> cars, OnBookClickListener bookListener, OnFavoriteClickListener favoriteListener) {
         this.context = context;
         this.cars = cars;
-        this.onBookClickListener = listener;
+        this.onBookClickListener = bookListener;
+        this.onFavoriteClickListener = favoriteListener;
+    }
+
+    public void setFavorites(Set<Integer> favoritesSet) {
+        this.favorites.clear();
+        if (favoritesSet != null) {
+            this.favorites.addAll(favoritesSet);
+        }
+        notifyDataSetChanged();
     }
 
     public List<Car> getCars() {
@@ -48,15 +62,11 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Car car = cars.get(position);
 
-        // Устанавливаем изображение автомобиля
         holder.carImage.setImageResource(car.getImageResId());
-
-        // Устанавливаем данные
         holder.carTitle.setText(car.getName());
         holder.carDetails.setText(car.getDescription());
         holder.carPrice.setText(car.getFormattedPrice());
 
-        // Устанавливаем статус и цвет бейджа
         if (car.isAvailable()) {
             holder.statusBadge.setText("ДОСТУПНО");
             holder.statusBadge.setBackgroundResource(R.drawable.badge_available);
@@ -85,31 +95,33 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.ViewHolder> {
             holder.bookButton.setContentDescription(car.getName() + " недоступен для бронирования");
         }
 
-        // Устанавливаем доступность для элементов
         holder.cardView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
         holder.carTitle.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         holder.carDetails.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         holder.carPrice.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         holder.statusBadge.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
 
-        // Настройка кнопки избранного
         boolean isFavorite = favorites.contains(car.getId());
         updateFavoriteButton(holder.favoriteButton, car.getId(), isFavorite);
         holder.favoriteButton.setContentDescription(isFavorite ? "Убрать из избранного" : "Добавить в избранное");
 
-        // Обработчик клика на кнопку избранного
         holder.favoriteButton.setOnClickListener(v -> {
             boolean wasFavorite = favorites.contains(car.getId());
-            if (wasFavorite) {
-                favorites.remove(car.getId());
-            } else {
+            boolean newFavoriteState = !wasFavorite;
+
+            if (newFavoriteState) {
                 favorites.add(car.getId());
+            } else {
+                favorites.remove(car.getId());
             }
-            updateFavoriteButton(holder.favoriteButton, car.getId(), !wasFavorite);
-            holder.favoriteButton.setContentDescription(!wasFavorite ? "Убрать из избранного" : "Добавить в избранное");
+            updateFavoriteButton(holder.favoriteButton, car.getId(), newFavoriteState);
+            holder.favoriteButton.setContentDescription(newFavoriteState ? "Убрать из избранного" : "Добавить в избранное");
+
+            if (onFavoriteClickListener != null) {
+                onFavoriteClickListener.onFavoriteClick(car.getId(), newFavoriteState);
+            }
         });
 
-        // Обработчик клика на кнопку бронирования
         holder.bookButton.setOnClickListener(v -> {
             if (car.isAvailable() && onBookClickListener != null) {
                 onBookClickListener.onBookClick(car);
@@ -124,7 +136,6 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.ViewHolder> {
             }
         });
 
-        // Установка контент-описания для карточки
         String speakableText = car.getName() + ", " + car.getPricePerDay() + " рублей в день, "
                 + car.getBodyType() + ", " + (car.isAvailable() ? "доступен" : "недоступен")
                 + ", " + car.getTransmission() + ", " + car.getFuelType() + ", " + car.getSeats() + " мест";
@@ -151,7 +162,6 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
-    // Класс ViewHolder
     static class ViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
         ImageView carImage;

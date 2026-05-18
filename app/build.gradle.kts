@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace = "com.example.avto"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.avto"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -37,17 +37,17 @@ android {
 }
 
 dependencies {
-    // Основные зависимости Android
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)
     implementation(libs.activity)
     implementation(libs.recyclerview)
 
-    // Для работы с анимациями
+    implementation("androidx.transition:transition:1.4.1")
+
     implementation("androidx.dynamicanimation:dynamicanimation:1.0.0")
 
-    // Для генерации QR-кода
     implementation("com.google.zxing:core:3.5.1")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
@@ -56,8 +56,7 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
 
-    // Тестирование
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 }

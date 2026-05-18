@@ -1,80 +1,183 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/white"
-    android:importantForAccessibility="yes">
+    android:background="@color/light_gray_background"
+    android:fillViewport="true">
 
-    <!-- Заголовок -->
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:background="@color/surface"
-        android:importantForAccessibility="yes">
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/backButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentStart="true"
-            android:src="@drawable/ic_back"
-            app:tint="@color/black"
-            android:contentDescription="@string/back"
-            android:scaleType="center"
-            android:importantForAccessibility="yes"
-            android:focusable="true"
-            android:clickable="true"
-            android:background="?selectableItemBackgroundBorderless"/>
-
-        <TextView
-            android:layout_width="wrap_content"
+        <!-- Верхняя панель -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/my_bookings"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:importantForAccessibility="yes"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="16dp"
+            android:background="@color/white"
+            android:elevation="4dp">
 
-    </RelativeLayout>
+            <ImageView
+                android:id="@+id/backButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_arrow_back"
+                android:padding="8dp"
+                android:background="@drawable/rounded_button_light"
+                android:contentDescription="Назад"
+                android:importantForAccessibility="yes"
+                app:tint="@color/black" />
 
-    <!-- Статистика -->
-    <TextView
-        android:id="@+id/bookingsCountTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="@string/bookings_count_default"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:background="@color/surface_light"
-        android:importantForAccessibility="yes"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Мои бронирования"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:importantForAccessibility="yes"
+                android:contentDescription="Список моих бронирований" />
 
-    <!-- Состояние пустого списка -->
-    <TextView
-        android:id="@+id/noBookingsText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:gravity="center"
-        android:text="@string/no_bookings"
-        android:textColor="@color/text_secondary"
-        android:textSize="16sp"
-        android:visibility="gone"
-        android:importantForAccessibility="yes"
-        android:contentDescription="@string/no_bookings_desc"/>
+            <!-- Пустой View для баланса -->
+            <View
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:importantForAccessibility="no" />
 
-    <!-- Список бронирований -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewBookings"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="8dp"
-        android:contentDescription="@string/bookings_list_desc"
-        android:importantForAccessibility="yes"/>
+        </LinearLayout>
 
-</LinearLayout>
+        <!-- Табы для фильтрации -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:importantForAccessibility="yes"
+            android:contentDescription="Фильтр бронирований">
+
+            <TextView
+                android:id="@+id/tabAll"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Все"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true"
+                android:importantForAccessibility="yes"
+                android:contentDescription="Показать все бронирования" />
+
+            <TextView
+                android:id="@+id/tabActive"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Активные"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                android:background="@drawable/tab_unselected"
+                android:clickable="true"
+                android:focusable="true"
+                android:importantForAccessibility="yes"
+                android:contentDescription="Показать только активные бронирования" />
+
+            <TextView
+                android:id="@+id/tabCompleted"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Завершённые"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                android:background="@drawable/tab_unselected"
+                android:clickable="true"
+                android:focusable="true"
+                android:importantForAccessibility="yes"
+                android:contentDescription="Показать завершённые бронирования" />
+
+        </LinearLayout>
+
+        <!-- Состояние пустого списка -->
+        <LinearLayout
+            android:id="@+id/emptyStateLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="48dp"
+            android:visibility="gone"
+            android:importantForAccessibility="yes"
+            android:contentDescription="Нет бронирований">
+
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/ic_empty_bookings"
+                android:contentDescription="Иконка пустого списка бронирований"
+                android:importantForAccessibility="yes" />
+
+            <TextView
+                android:id="@+id/emptyTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Нет бронирований"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:importantForAccessibility="yes" />
+
+            <TextView
+                android:id="@+id/emptySubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="У вас пока нет бронирований.\nНачните аренду прямо сейчас!"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:importantForAccessibility="yes" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnGoToMain"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginTop="24dp"
+                android:text="Выбрать автомобиль"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/orange_primary"
+                app:cornerRadius="12dp"
+                android:paddingHorizontal="24dp"
+                android:importantForAccessibility="yes"
+                android:contentDescription="Перейти к выбору автомобиля" />
+
+        </LinearLayout>
+
+        <!-- Список бронирований -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewBookings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="80dp"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="false"
+            android:importantForAccessibility="yes"
+            android:contentDescription="Список ваших бронирований. Каждый элемент содержит информацию об автомобиле, датах и стоимости."
+            android:accessibilityTraversalBefore="@id/emptyStateLayout" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>
